@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Hanken Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Colors based on Blue North Design System */
+  --color-primary: #061449;
+  --color-primary-container: #1e2a5e;
+  --color-on-primary-container: #8793cd;
+  
+  --color-secondary: #00696e;
+  --color-secondary-container: #00f4fe; /* Signal Cyan */
+  --color-on-secondary-container: #006c71;
+  
+  --color-surface: #f8f9ff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #45464f;
+  
+  --color-outline: #767680;
+  --color-outline-variant: #c6c5d1;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+}
+
+.grid-bg {
+  background-image: radial-gradient(circle, var(--color-outline-variant) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+}
