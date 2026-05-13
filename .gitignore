@@ -1,8 +1,36 @@
+# Dependencies
 node_modules/
-build/
+
+# Build output
 dist/
+build/
+
+# Test and coverage output
 coverage/
-.DS_Store
+.nyc_output/
+
+# Vite / tooling caches
+.vite/
+.cache/
+.parcel-cache/
+*.tsbuildinfo
+
+# Logs
+logs/
 *.log
-.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
 !.env.example
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
