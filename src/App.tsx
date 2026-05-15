@@ -280,12 +280,12 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
 function Navbar() {
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface/88 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <a href="#" className="flex items-center gap-3 text-primary">
-          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-white shadow-sm">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-4 md:px-8">
+        <a href="#" className="flex min-w-0 items-center gap-3 text-primary">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-white shadow-sm">
             <Vote size={22} />
           </span>
-          <span className="font-display text-2xl font-extrabold tracking-tight">RunVoteWin</span>
+          <span className="truncate font-display text-xl font-extrabold tracking-tight sm:text-2xl">RunVoteWin</span>
         </a>
 
         <div className="hidden items-center gap-8 lg:flex">
@@ -302,7 +302,7 @@ function Navbar() {
 
         <a
           href={appUrl}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-container"
+          className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-container sm:px-4"
         >
           Access App
           <ArrowRight size={16} />
@@ -320,10 +320,11 @@ function Hero() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
+          className="min-w-0"
         >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-white/75 px-4 py-2 text-sm font-bold text-accent shadow-sm">
-            <Flag size={16} />
-            Built for Democratic campaigns competing to win
+          <div className="mb-6 inline-flex max-w-full items-start gap-2 rounded-full border border-accent/25 bg-white/75 px-4 py-2 text-left text-sm font-bold leading-5 text-accent shadow-sm">
+            <Flag className="mt-0.5 shrink-0" size={16} />
+            <span className="min-w-0">Built for Democratic campaigns competing to win</span>
           </div>
 
           <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-primary md:text-7xl">
@@ -343,30 +344,37 @@ function Hero() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.65, delay: 0.1 }}
-          className="relative"
+          className="relative min-w-0"
         >
           <div className="dashboard-shell overflow-hidden rounded-lg border border-outline-variant bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-outline-variant bg-surface-container-low px-4 py-3">
               <div className="flex items-center gap-2 text-sm font-bold text-primary">
                 <Map size={18} />
-                Field Command
+                Turf Cutter
               </div>
               <div className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
-                Live
+                Austin, TX
               </div>
             </div>
 
             <div className="grid gap-4 p-4">
-              <div className="relative h-72 overflow-hidden rounded-md border border-outline-variant bg-map">
-                <div className="absolute left-[16%] top-[22%] h-24 w-28 rounded-md border-2 border-accent/70 bg-accent/12"></div>
-                <div className="absolute right-[18%] top-[16%] h-28 w-24 rounded-md border-2 border-purple/70 bg-purple/12"></div>
-                <div className="absolute bottom-[16%] left-[38%] h-28 w-32 rounded-md border-2 border-secondary/70 bg-secondary/12"></div>
-                <div className="absolute left-[48%] top-[42%] flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white shadow-lg">
-                  <Users size={18} />
+              <div className="relative h-72 overflow-hidden rounded-md border border-outline-variant bg-surface-container-low sm:aspect-[16/9] sm:h-auto">
+                <img
+                  src="turf-cutter-hero.png"
+                  alt="RunVoteWin turf cutter showing optimized campaign turfs on a map of Austin"
+                  className="h-full w-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/10"></div>
+                <div className="absolute left-4 top-4 rounded-md border border-white/70 bg-white/92 px-4 py-3 shadow-lg backdrop-blur">
+                  <p className="text-xs font-bold uppercase text-on-surface-variant">Walkable turfs generated</p>
+                  <p className="font-display text-3xl font-extrabold text-primary">6 field loops</p>
                 </div>
-                <div className="absolute bottom-4 left-4 rounded-md bg-white/94 p-4 shadow-lg">
-                  <p className="text-xs font-bold uppercase text-on-surface-variant">Turf efficiency</p>
-                  <p className="font-display text-4xl font-extrabold text-primary">135%</p>
+                <div className="absolute bottom-4 right-4 max-w-48 rounded-md border border-white/70 bg-primary/92 p-4 text-white shadow-lg backdrop-blur">
+                  <p className="text-xs font-bold uppercase text-on-primary-container">Turf efficiency</p>
+                  <p className="font-display text-4xl font-extrabold">135%</p>
+                  <p className="mt-1 text-xs font-semibold leading-5 text-on-primary-container">
+                    More efficient turfs from modern geospatial cutting.
+                  </p>
                 </div>
               </div>
 
