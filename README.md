@@ -49,6 +49,10 @@ The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google 
 
 Until that endpoint is configured, the form renders normally but displays a connection-needed message on submit.
 
+## Assets
+
+The NGP VAN comparison logo is sourced from Wikimedia Commons: https://commons.wikimedia.org/wiki/File:NGPVAN_Logo.svg
+
 ## Deployment
 
 GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
