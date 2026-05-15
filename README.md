@@ -2,7 +2,7 @@
 
 Landing page for RunVoteWin, a modern canvassing and voter data system for Democratic Party campaigns.
 
-Live site: https://runvotewin.github.io/landing/
+Live site: https://runvotewin.com/
 
 ## Development
 
@@ -53,6 +53,6 @@ Until that endpoint is configured, the form renders normally but displays a conn
 
 GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
 
-The Vite `base` option is set to `./` so the static build works from both the custom domain root and the fallback `runvotewin.github.io/landing/` path.
+The Vite `base` option is set to `./` so the static build works from the custom domain root without hard-coded repository paths.
 
 In GitHub Pages settings, the source should be **GitHub Actions**. Do not serve the repository root directly; that serves `src/main.tsx` instead of the static `dist` build and will fail in the browser.
