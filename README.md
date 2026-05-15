@@ -35,19 +35,39 @@ Build for production:
 npm run build
 ```
 
-## Signup Form
+## Lead and Pricing Forms
 
-The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google Apps Script web app URL that accepts this JSON payload:
+The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google Apps Script web app URL that accepts lead and pricing-estimate payloads.
 
 ```json
 {
+  "formType": "pricing",
   "name": "Jane Organizer",
   "email": "jane@campaign.org",
+  "role": "candidate",
+  "campaignSize": "congressional",
+  "estimateMonthly": 1250,
   "source": "RunVoteWin landing page"
 }
 ```
 
-Until that endpoint is configured, the form renders normally but displays a connection-needed message on submit.
+Until that endpoint is configured, the forms render normally but display a connection-needed message on submit.
+
+### Google Apps Script setup
+
+1. Open the Google Sheet for leads.
+2. Go to **Extensions > Apps Script**.
+3. Paste the contents of `automation/google-apps-script/pricing-leads.gs`.
+4. Optional: set `TEAM_NOTIFY_EMAIL` in the script if the team should receive internal lead notifications.
+5. Click **Deploy > New deployment**.
+6. Choose **Web app**.
+7. Set **Execute as** to **Me**.
+8. Set **Who has access** to **Anyone**.
+9. Deploy and copy the web app URL ending in `/exec`.
+10. In GitHub, add a repository secret named `VITE_SIGNUP_ENDPOINT` with that `/exec` URL.
+11. Re-run the GitHub Pages workflow or merge any change to rebuild the static site with the endpoint.
+
+The front end sends `text/plain` JSON with `mode: no-cors` so Google Apps Script can receive submissions from GitHub Pages without a CORS preflight.
 
 ## Assets
 

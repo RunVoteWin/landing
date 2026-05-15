@@ -31,6 +31,11 @@ type PricingOption = {
   price: number;
 };
 
+type RoleOption = {
+  id: string;
+  label: string;
+};
+
 const navItems = [
   { label: 'Platform', href: '#platform' },
   { label: 'Pricing', href: '#pricing' },
@@ -65,7 +70,7 @@ const platformFeatures = [
 const campaignOptions: PricingOption[] = [
   {
     id: 'local',
-    label: 'Local or county',
+    label: 'Local / county',
     description: 'Municipal, school board, countywide, and targeted local programs.',
     price: 249,
   },
@@ -89,31 +94,10 @@ const campaignOptions: PricingOption[] = [
   },
 ];
 
-const universeOptions: PricingOption[] = [
-  {
-    id: 'launch',
-    label: 'Launch universe',
-    description: 'Up to 50,000 voters',
-    price: 0,
-  },
-  {
-    id: 'district',
-    label: 'District universe',
-    description: 'Up to 250,000 voters',
-    price: 250,
-  },
-  {
-    id: 'congressional',
-    label: 'Congressional universe',
-    description: 'Up to 750,000 voters',
-    price: 600,
-  },
-  {
-    id: 'statewide',
-    label: 'Large program',
-    description: 'Statewide or multi-district data',
-    price: 1200,
-  },
+const roleOptions: RoleOption[] = [
+  { id: 'candidate', label: 'Candidate' },
+  { id: 'consultant', label: 'Consultant' },
+  { id: 'staff', label: 'Campaign staff' },
 ];
 
 const integrations = [
@@ -187,6 +171,19 @@ function formatPrice(value: number) {
   }).format(value);
 }
 
+function postLead(payload: Record<string, unknown>) {
+  return fetch(signupEndpoint, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      ...payload,
+      submittedAt: new Date().toISOString(),
+      page: window.location.href,
+    }),
+  });
+}
+
 function SignupForm({ variant }: { variant: SignupFormVariant }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -203,15 +200,7 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
     setStatus('loading');
 
     try {
-      const response = await fetch(signupEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, source: 'RunVoteWin landing page' }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Signup request failed');
-      }
+      await postLead({ formType: 'updates', name, email, source: 'RunVoteWin landing page' });
 
       setStatus('success');
       setName('');
@@ -432,15 +421,45 @@ function Platform() {
 
 function Pricing() {
   const [campaignId, setCampaignId] = useState('congressional');
-  const [universeId, setUniverseId] = useState('congressional');
+  const [role, setRole] = useState('candidate');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
 
   const selectedCampaign = campaignOptions.find((option) => option.id === campaignId) ?? campaignOptions[2];
-  const selectedUniverse = universeOptions.find((option) => option.id === universeId) ?? universeOptions[2];
 
-  const monthlyTotal = useMemo(
-    () => selectedCampaign.price + selectedUniverse.price,
-    [selectedCampaign.price, selectedUniverse.price],
-  );
+  const monthlyTotal = useMemo(() => selectedCampaign.price, [selectedCampaign.price]);
+
+  async function handlePricingSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!signupEndpoint) {
+      setStatus('needs-endpoint');
+      return;
+    }
+
+    setStatus('loading');
+
+    try {
+      await postLead({
+        formType: 'pricing',
+        name,
+        email,
+        role,
+        campaignSize: selectedCampaign.id,
+        campaignSizeLabel: selectedCampaign.label,
+        estimateMonthly: monthlyTotal,
+        estimateFormatted: `${formatPrice(monthlyTotal)}/mo`,
+        source: 'RunVoteWin pricing estimator',
+      });
+
+      setStatus('success');
+      setName('');
+      setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  }
 
   return (
     <section id="pricing" className="bg-white py-24">
@@ -449,67 +468,95 @@ function Pricing() {
           <div>
             <p className="mb-4 text-sm font-extrabold uppercase text-accent">Transparent pricing</p>
             <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-              Know the ballpark before you book a call.
+              Get a clear campaign estimate by email.
             </h2>
             <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-              Campaigns deserve straightforward numbers. Use the estimator below to choose what you are running and the size of the voter universe you expect to manage.
+              Campaigns deserve straightforward numbers. Choose the size of your campaign, tell us who you are, and we will send a pricing estimate you can share with the team.
             </p>
             <p className="mt-4 text-sm font-semibold leading-6 text-on-surface-variant">
-              Final pricing depends on state availability, data needs, and compliance requirements. No surprise platform fees.
+              Final pricing depends on state availability, data needs, and compliance requirements. This gives you a serious planning number before a sales call.
             </p>
           </div>
 
-          <div className="rounded-lg border border-outline-variant bg-surface p-6 shadow-xl">
+          <form onSubmit={handlePricingSubmit} className="rounded-lg border border-outline-variant bg-surface p-6 shadow-xl">
             <div className="mb-6 flex items-center gap-3 text-primary">
               <SlidersHorizontal size={24} />
               <h3 className="font-display text-3xl font-extrabold">Pricing estimator</h3>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
-              <div>
-                <p className="mb-3 text-sm font-extrabold uppercase text-primary">What are you running?</p>
-                <div className="grid gap-3">
-                  {campaignOptions.map((option) => (
-                    <button
-                      type="button"
-                      key={option.id}
-                      onClick={() => setCampaignId(option.id)}
-                      className={`rounded-md border p-4 text-left transition ${
-                        campaignId === option.id
-                          ? 'border-accent bg-white shadow-md'
-                          : 'border-outline-variant bg-surface-container-low hover:bg-white'
-                      }`}
-                    >
-                      <span className="flex items-center justify-between gap-3">
-                        <span className="font-display text-xl font-extrabold text-primary">{option.label}</span>
-                        <span className="text-sm font-bold text-accent">{formatPrice(option.price)}/mo</span>
-                      </span>
-                      <span className="mt-2 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
-                    </button>
-                  ))}
-                </div>
+            <div>
+              <p className="mb-3 text-sm font-extrabold uppercase text-primary">Campaign size</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {campaignOptions.map((option) => (
+                  <button
+                    type="button"
+                    key={option.id}
+                    onClick={() => setCampaignId(option.id)}
+                    className={`rounded-md border p-4 text-left transition ${
+                      campaignId === option.id
+                        ? 'border-accent bg-white shadow-md'
+                        : 'border-outline-variant bg-surface-container-low hover:bg-white'
+                    }`}
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="font-display text-xl font-extrabold text-primary">{option.label}</span>
+                      <span className="text-sm font-bold text-accent">{formatPrice(option.price)}/mo</span>
+                    </span>
+                    <span className="mt-2 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_0.8fr]">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label>
+                  <span className="mb-2 block text-sm font-bold text-primary">Name</span>
+                  <input
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    required
+                    className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                    placeholder="Jane Organizer"
+                    type="text"
+                  />
+                </label>
+
+                <label>
+                  <span className="mb-2 block text-sm font-bold text-primary">Email</span>
+                  <input
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    required
+                    className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                    placeholder="jane@campaign.org"
+                    type="email"
+                  />
+                </label>
               </div>
 
               <div>
-                <p className="mb-3 text-sm font-extrabold uppercase text-primary">Voter universe</p>
-                <div className="grid gap-3">
-                  {universeOptions.map((option) => (
-                    <button
-                      type="button"
+                <p className="mb-2 text-sm font-bold text-primary">Your role</p>
+                <div className="grid gap-2">
+                  {roleOptions.map((option) => (
+                    <label
                       key={option.id}
-                      onClick={() => setUniverseId(option.id)}
-                      className={`rounded-md border p-4 text-left transition ${
-                        universeId === option.id
-                          ? 'border-purple bg-white shadow-md'
-                          : 'border-outline-variant bg-surface-container-low hover:bg-white'
+                      className={`flex cursor-pointer items-center gap-3 rounded-md border px-4 py-3 text-sm font-bold transition ${
+                        role === option.id
+                          ? 'border-purple bg-white text-primary shadow-sm'
+                          : 'border-outline-variant bg-surface-container-low text-on-surface-variant'
                       }`}
                     >
-                      <span className="flex items-center justify-between gap-3">
-                        <span className="font-display text-xl font-extrabold text-primary">{option.label}</span>
-                        <span className="text-sm font-bold text-purple">+{formatPrice(option.price)}/mo</span>
-                      </span>
-                      <span className="mt-2 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
-                    </button>
+                      <input
+                        type="radio"
+                        name="role"
+                        value={option.id}
+                        checked={role === option.id}
+                        onChange={() => setRole(option.id)}
+                        className="accent-primary"
+                      />
+                      {option.label}
+                    </label>
                   ))}
                 </div>
               </div>
@@ -522,19 +569,35 @@ function Pricing() {
                   <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
                   <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
                 </div>
-                <a
-                  href={appUrl}
-                  className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container"
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  Access App
+                  {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
                   <ArrowRight size={18} />
-                </a>
+                </button>
               </div>
               <p className="mt-5 text-sm leading-6 text-on-primary-container">
                 Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
               </p>
+              {status === 'needs-endpoint' && (
+                <p className="mt-4 rounded-md bg-white/10 p-3 text-sm font-semibold leading-6 text-white">
+                  Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+                </p>
+              )}
+              {status === 'success' && (
+                <p className="mt-4 rounded-md bg-secondary-container/20 p-3 text-sm font-semibold text-secondary-container">
+                  Estimate request received. Check your inbox in a moment.
+                </p>
+              )}
+              {status === 'error' && (
+                <p className="mt-4 rounded-md bg-red-500/20 p-3 text-sm font-semibold text-white">
+                  Something went wrong. Please try again.
+                </p>
+              )}
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </section>
