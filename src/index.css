@@ -6,26 +6,29 @@
   --font-display: "Hanken Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  /* Colors based on Blue North Design System */
-  --color-primary: #061449;
-  --color-primary-container: #1e2a5e;
-  --color-on-primary-container: #8793cd;
+  /* RunVoteWin brand colors */
+  --color-primary: #06245c;
+  --color-primary-container: #173b82;
+  --color-on-primary-container: #b9c9f7;
   
-  --color-secondary: #00696e;
-  --color-secondary-container: #00f4fe; /* Signal Cyan */
-  --color-on-secondary-container: #006c71;
+  --color-secondary: #087d8f;
+  --color-secondary-container: #8eefff;
+  --color-on-secondary-container: #043f49;
+
+  --color-accent: #3159d7;
+  --color-purple: #7b4ff0;
   
-  --color-surface: #f8f9ff;
-  --color-surface-container-low: #eff4ff;
-  --color-surface-container: #e5eeff;
-  --color-surface-container-high: #dce9ff;
-  --color-surface-container-highest: #d3e4fe;
+  --color-surface: #f7faff;
+  --color-surface-container-low: #edf4ff;
+  --color-surface-container: #dfeaff;
+  --color-surface-container-high: #d0ddfb;
+  --color-surface-container-highest: #bfd0f5;
   
-  --color-on-surface: #0b1c30;
-  --color-on-surface-variant: #45464f;
+  --color-on-surface: #071936;
+  --color-on-surface-variant: #46566f;
   
-  --color-outline: #767680;
-  --color-outline-variant: #c6c5d1;
+  --color-outline: #6f7e9a;
+  --color-outline-variant: #c4d1e8;
 }
 
 @layer base {
@@ -42,4 +45,23 @@
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
+}
+
+.bg-hero {
+  background:
+    linear-gradient(135deg, rgba(247, 250, 255, 0.98), rgba(223, 234, 255, 0.88)),
+    radial-gradient(circle at 82% 18%, rgba(123, 79, 240, 0.18), transparent 32%),
+    radial-gradient(circle at 16% 16%, rgba(49, 89, 215, 0.18), transparent 28%);
+}
+
+.dashboard-shell {
+  box-shadow: 0 28px 80px rgba(6, 36, 92, 0.22);
+}
+
+.bg-map {
+  background:
+    linear-gradient(90deg, rgba(6, 36, 92, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(6, 36, 92, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #eef5ff, #d8e6ff);
+  background-size: 36px 36px, 36px 36px, auto;
 }

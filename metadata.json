@@ -1,8 +1,0 @@
-{
-  "name": "Blue North",
-  "description": "Modern, open-source organizing platform for voter contact, turf cutting, and campaign operations.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}

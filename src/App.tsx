@@ -1,460 +1,509 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowRight, 
-  Map, 
-  Database, 
-  PhoneCall, 
-  Terminal, 
-  ChevronDown, 
-  Github, 
-  Lock, 
-  Zap, 
-  UserPlus, 
-  TrendingDown, 
-  EyeOff,
-  Code,
-  Globe,
-  Smartphone,
-  Download,
-  Users
+import { FormEvent, useState } from 'react';
+import { motion } from 'motion/react';
+import {
+  ArrowRight,
+  BadgeCheck,
+  BarChart3,
+  CheckCircle2,
+  Database,
+  Flag,
+  HeartHandshake,
+  LineChart,
+  Mail,
+  Map,
+  MapPinned,
+  ShieldCheck,
+  Sparkles,
+  User,
+  Users,
+  Vote,
+  Zap,
 } from 'lucide-react';
 
-// --- Components ---
+const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 
-const Navbar = () => (
-  <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-outline-variant">
-    <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-          <Map className="text-secondary-container w-5 h-5" />
+const navItems = [
+  { label: 'Platform', href: '#platform' },
+  { label: 'Why us', href: '#why-us' },
+  { label: 'States', href: '#states' },
+  { label: 'Updates', href: '#updates' },
+];
+
+const proofPoints = [
+  { value: '135%', label: 'more efficient turf cutting' },
+  { value: '30', label: 'combined political cycles' },
+  { value: '2', label: 'states supported today' },
+];
+
+const platformFeatures = [
+  {
+    icon: MapPinned,
+    title: 'Cut turf faster',
+    text: 'Open source, cutting-edge turf technology helps field teams make smarter walk packets and cover more ground.',
+  },
+  {
+    icon: Database,
+    title: 'Modern voter data',
+    text: 'A canvassing and voter data system built for the high-tech world campaigns operate in now.',
+  },
+  {
+    icon: BarChart3,
+    title: 'Campaign-first reporting',
+    text: 'Track field work clearly, learn what is happening quickly, and keep teams focused on winning.',
+  },
+];
+
+const values = [
+  'Built only for Democratic Party campaigns',
+  'Made in America, by Americans, and 100% American-owned',
+  'Run by people who love campaigns and care whether you win',
+  'Product direction shaped by the campaigns using it',
+];
+
+const comparisons = [
+  {
+    label: 'Cost',
+    runVoteWin: 'Built to be dramatically cheaper for serious campaigns',
+    legacy: 'Expensive contracts that can crowd out field budget',
+  },
+  {
+    label: 'Turf',
+    runVoteWin: 'Open source cutting-edge turf technology with 135% more efficient turfs',
+    legacy: 'Older workflows that slow down organizers',
+  },
+  {
+    label: 'Product direction',
+    runVoteWin: 'Users help decide what gets built next',
+    legacy: 'Roadmaps set far from the campaigns doing the work',
+  },
+  {
+    label: 'Ownership',
+    runVoteWin: 'American-made and American-owned',
+    legacy: 'Too often shaped by private equity incentives',
+  },
+];
+
+const states = ['Texas', 'Virginia'];
+
+function Navbar() {
+  return (
+    <nav className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface/88 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
+        <a href="#" className="flex items-center gap-3 text-primary">
+          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-white shadow-sm">
+            <Vote size={22} />
+          </span>
+          <span className="font-display text-2xl font-extrabold tracking-tight">RunVoteWin</span>
+        </a>
+
+        <div className="hidden items-center gap-8 md:flex">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-sm font-semibold text-on-surface-variant transition-colors hover:text-primary"
+            >
+              {item.label}
+            </a>
+          ))}
         </div>
-        <span className="font-display font-bold text-xl tracking-tight text-primary">Blue North</span>
-      </div>
-      
-      <div className="hidden md:flex items-center gap-8">
-        <a href="#" className="font-mono text-xs font-medium text-primary border-b-2 border-primary pb-1">Voter File</a>
-        <a href="#" className="font-mono text-xs font-medium text-on-surface-variant hover:text-primary transition-colors">Turf Cutting</a>
-        <a href="#" className="font-mono text-xs font-medium text-on-surface-variant hover:text-primary transition-colors">Phone Banking</a>
-        <a href="#" className="font-mono text-xs font-medium text-on-surface-variant hover:text-primary transition-colors">Open Source</a>
-      </div>
 
-      <div className="flex items-center gap-4">
-        <button className="hidden md:block font-mono text-xs font-bold text-primary hover:underline">Login</button>
-        <button className="bg-primary text-white px-4 py-2 rounded-sm font-mono text-xs font-medium hover:bg-primary-container transition-all active:scale-95 shadow-sm">
-          Request Access
-        </button>
+        <a
+          href="#updates"
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-container"
+        >
+          Get updates
+          <ArrowRight size={16} />
+        </a>
       </div>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+}
 
-const Hero = () => (
-  <section className="relative overflow-hidden pt-32 pb-24 grid-bg">
-    <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="z-10"
-      >
-        <span className="inline-block bg-secondary-container text-on-secondary-container px-2 py-1 font-mono text-[10px] font-bold rounded mb-4">
-          V.2.0 OPEN STACK
-        </span>
-        <h1 className="font-display text-5xl md:text-6xl font-bold text-primary leading-[1.1] mb-6 tracking-tight">
-          Campaign field software that doesn't feel stuck in 2008.
-        </h1>
-        <p className="text-lg text-on-surface-variant mb-10 max-w-lg leading-relaxed">
-          Blue North is the modern, open-source organizing platform for voter contact, turf cutting, and campaign operations. Built by organizers, for organizers.
-        </p>
-        <div className="flex flex-wrap gap-4">
-          <button className="bg-primary text-white px-8 py-4 rounded-lg font-display text-lg font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all">
-            Request Access
+function Hero() {
+  return (
+    <section className="relative overflow-hidden bg-hero pt-32 text-primary md:pt-36">
+      <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 md:px-8 lg:grid-cols-[1fr_0.92fr] lg:items-center lg:pb-24">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+        >
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-white/70 px-4 py-2 text-sm font-bold text-accent shadow-sm">
+            <Flag size={16} />
+            For Democratic campaigns ready to win
+          </div>
+
+          <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-primary md:text-7xl">
+            The modern voter data and canvassing system for campaigns that mean it.
+          </h1>
+
+          <p className="mt-7 max-w-2xl text-xl leading-8 text-on-surface-variant">
+            RunVoteWin helps Democratic campaigns organize field programs, cut better turfs, and move faster. We love campaigns, and we actually care if they win.
+          </p>
+
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="#updates"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-7 py-4 font-display text-lg font-bold text-white shadow-xl transition hover:-translate-y-0.5 hover:bg-primary-container"
+            >
+              Get campaign updates
+              <ArrowRight size={20} />
+            </a>
+            <a
+              href="#why-us"
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-outline-variant bg-white/72 px-7 py-4 font-display text-lg font-bold text-primary transition hover:bg-white"
+            >
+              See why it is different
+            </a>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.65, delay: 0.1 }}
+          className="relative"
+        >
+          <div className="dashboard-shell overflow-hidden rounded-lg border border-outline-variant bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-outline-variant bg-surface-container-low px-4 py-3">
+              <div className="flex items-center gap-2 text-sm font-bold text-primary">
+                <Map size={18} />
+                Field Command
+              </div>
+              <div className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
+                Live
+              </div>
+            </div>
+
+            <div className="grid gap-4 p-4">
+              <div className="relative h-72 overflow-hidden rounded-md border border-outline-variant bg-map">
+                <div className="absolute left-[16%] top-[22%] h-24 w-28 rounded-md border-2 border-accent/70 bg-accent/12"></div>
+                <div className="absolute right-[18%] top-[16%] h-28 w-24 rounded-md border-2 border-purple/70 bg-purple/12"></div>
+                <div className="absolute bottom-[16%] left-[38%] h-28 w-32 rounded-md border-2 border-secondary/70 bg-secondary/12"></div>
+                <div className="absolute left-[48%] top-[42%] flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white shadow-lg">
+                  <Users size={18} />
+                </div>
+                <div className="absolute bottom-4 left-4 rounded-md bg-white/94 p-4 shadow-lg">
+                  <p className="text-xs font-bold uppercase text-on-surface-variant">Turf efficiency</p>
+                  <p className="font-display text-4xl font-extrabold text-primary">135%</p>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {proofPoints.map((point) => (
+                  <div key={point.label} className="rounded-md border border-outline-variant bg-surface-container-low p-4">
+                    <p className="font-display text-3xl font-extrabold text-primary">{point.value}</p>
+                    <p className="mt-1 text-xs font-semibold uppercase leading-5 text-on-surface-variant">{point.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Platform() {
+  return (
+    <section id="platform" className="bg-surface py-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="max-w-3xl">
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Built for modern field work</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Better tools for the campaigns doing the hard work.
+          </h2>
+        </div>
+
+        <div className="mt-12 grid gap-5 md:grid-cols-3">
+          {platformFeatures.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <article key={feature.title} className="rounded-lg border border-outline-variant bg-white p-7 shadow-sm">
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-md bg-primary text-white">
+                  <Icon size={24} />
+                </div>
+                <h3 className="font-display text-2xl font-extrabold text-primary">{feature.title}</h3>
+                <p className="mt-4 leading-7 text-on-surface-variant">{feature.text}</p>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhyUs() {
+  return (
+    <section id="why-us" className="bg-primary py-24 text-white">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-[0.8fr_1fr] lg:items-start">
+        <div>
+          <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">Not legacy campaign software</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
+            Way better and cheaper than NGP VAN.
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-on-primary-container">
+            RunVoteWin is not open source, but it uses open source cutting-edge turf technology where it matters most: helping campaigns build more efficient field programs.
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-lg border border-white/15 bg-white/7">
+          {comparisons.map((row) => (
+            <div key={row.label} className="grid gap-4 border-b border-white/12 p-5 last:border-b-0 md:grid-cols-[0.38fr_1fr_1fr]">
+              <p className="font-display text-xl font-extrabold text-secondary-container">{row.label}</p>
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase text-secondary-container">RunVoteWin</p>
+                <p className="leading-7 text-white">{row.runVoteWin}</p>
+              </div>
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase text-white/45">Legacy tools</p>
+                <p className="leading-7 text-on-primary-container">{row.legacy}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Ownership() {
+  return (
+    <section className="bg-surface-container-low py-24">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-2 lg:items-center">
+        <div>
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">American-owned campaign technology</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Made in America, by Americans, and owned 100% by Americans.
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-on-surface-variant">
+            No Saudi wealth fund. No foreign private equity. RunVoteWin is built by people who believe Democratic campaigns should have modern technology aligned with their mission.
+          </p>
+        </div>
+
+        <div className="grid gap-4">
+          {values.map((value) => (
+            <div key={value} className="flex gap-4 rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
+              <CheckCircle2 className="mt-1 shrink-0 text-accent" size={22} />
+              <p className="text-lg font-semibold leading-7 text-primary">{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Direction() {
+  return (
+    <section className="bg-white py-24">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.95fr_1fr] lg:items-center">
+        <div className="rounded-lg border border-outline-variant bg-surface p-7 shadow-sm">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase text-on-surface-variant">Feature voting</p>
+              <h3 className="font-display text-3xl font-extrabold text-primary">Next up</h3>
+            </div>
+            <Sparkles className="text-purple" size={28} />
+          </div>
+
+          {[
+            ['Smarter turf balancing', '82%'],
+            ['Volunteer shift health', '68%'],
+            ['Persuasion universe builder', '55%'],
+          ].map(([label, value]) => (
+            <div key={label} className="mb-6 last:mb-0">
+              <div className="mb-2 flex justify-between text-sm font-bold text-primary">
+                <span>{label}</span>
+                <span>{value}</span>
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-surface-container">
+                <div className="h-full rounded-full bg-purple" style={{ width: value }}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Built with campaigns</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Users decide where the product goes next.
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-on-surface-variant">
+            Campaigns using RunVoteWin help choose which features get added next. The roadmap is shaped by organizers, data directors, field directors, and campaign managers doing the work every day.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function States() {
+  return (
+    <section id="states" className="bg-primary-container py-24 text-white">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:items-end">
+          <div>
+            <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">Available now</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
+              Supporting Democratic campaigns in Texas and Virginia.
+            </h2>
+          </div>
+          <p className="text-lg leading-8 text-on-primary-container">
+            More states are coming soon. We are expanding carefully so the product stays fast, reliable, and useful for the campaigns already depending on it.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2">
+          {states.map((state) => (
+            <div key={state} className="flex items-center gap-4 rounded-lg border border-white/15 bg-white/8 p-7">
+              <ShieldCheck className="text-secondary-container" size={30} />
+              <div>
+                <p className="font-display text-3xl font-extrabold">{state}</p>
+                <p className="mt-1 text-sm font-semibold uppercase text-on-primary-container">Supported today</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Signup() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!signupEndpoint) {
+      setStatus('needs-endpoint');
+      return;
+    }
+
+    setStatus('loading');
+
+    try {
+      const response = await fetch(signupEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, source: 'RunVoteWin landing page' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Signup request failed');
+      }
+
+      setStatus('success');
+      setName('');
+      setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  }
+
+  return (
+    <section id="updates" className="bg-hero py-24">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.95fr_1fr] lg:items-center">
+        <div>
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Get updates</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Follow the product as we add states and ship new campaign tools.
+          </h2>
+          <p className="mt-6 text-lg leading-8 text-on-surface-variant">
+            Drop your name and email and we will send updates when RunVoteWin expands, launches new features, or opens more campaign access.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="rounded-lg border border-outline-variant bg-white p-6 shadow-xl">
+          <label className="mb-5 block">
+            <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+              <User size={16} />
+              Name
+            </span>
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              required
+              className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+              placeholder="Jane Organizer"
+              type="text"
+            />
+          </label>
+
+          <label className="mb-6 block">
+            <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+              <Mail size={16} />
+              Email
+            </span>
+            <input
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+              placeholder="jane@campaign.org"
+              type="email"
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {status === 'loading' ? 'Sending...' : 'Get updates'}
             <ArrowRight size={20} />
           </button>
-          <button className="border border-outline text-primary px-8 py-4 rounded-lg font-display text-lg font-semibold flex items-center gap-2 hover:bg-surface-container transition-all">
-            <Github size={20} />
-            View on GitHub
-          </button>
-        </div>
-      </motion.div>
 
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="relative"
-      >
-        <div className="glass-card border border-outline-variant rounded-xl shadow-2xl p-2 overflow-hidden">
-          <div className="bg-surface-container px-4 py-2 border-b border-outline-variant flex justify-between items-center mb-2">
-            <div className="flex items-center gap-2">
-              <Map className="text-primary w-4 h-4" />
-              <span className="font-mono text-[10px] text-primary font-medium tracking-wider">FIELD_COMMAND_CENTER / TURF_04</span>
-            </div>
-            <div className="flex gap-1">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-cyan-400"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
-            </div>
-          </div>
-          
-          <div className="relative h-[400px] bg-slate-100 rounded overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=1000" 
-              className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale brightness-110"
-              alt="Map Background"
-            />
-            <div className="absolute inset-0 p-4 flex flex-col gap-4">
-              <div className="w-48 bg-white/95 border border-outline-variant p-3 rounded shadow-md">
-                <p className="font-mono text-[10px] text-on-surface-variant mb-2">TURF COMPLETION</p>
-                <div className="w-full bg-surface-container h-1.5 rounded-full mb-1">
-                  <div className="bg-secondary h-full w-[68%] rounded-full"></div>
-                </div>
-                <p className="font-mono text-[10px] font-bold text-secondary">68.4% SYNCED</p>
-              </div>
-              <div className="ml-auto w-52 bg-white/95 border border-outline-variant p-3 rounded shadow-md">
-                <p className="font-mono text-[10px] text-on-surface-variant mb-2">LIVE CANVASSERS</p>
-                <div className="flex -space-x-2">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-surface-container-highest"></div>
-                  ))}
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white border-2 border-white">+12</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="absolute top-1/2 left-1/3">
-              <motion.div 
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center"
-              >
-                <div className="w-3 h-3 bg-primary rounded-full border-2 border-white shadow-lg"></div>
-              </motion.div>
-            </div>
-            <div className="absolute bottom-1/4 right-1/2">
-              <div className="w-8 h-8 bg-secondary/20 rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-secondary rounded-full border-2 border-white shadow-lg"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  </section>
-);
-
-const ProblemSection = () => {
-  const problems = [
-    { icon: <TrendingDown />, title: "Expensive Licenses", text: "Don't let software fees swallow your field budget. We believe technology should scale without crushing costs." },
-    { icon: <Zap />, title: "Clunky Workflows", text: "Stop wasting staff hours on manual data imports and outdated UIs. Blue North is built for speed." },
-    { icon: <Lock />, title: "Locked-down Data", text: "It's your data. You should be able to export and own it without paying a premium." },
-    { icon: <Users />, title: "Volunteer Friction", text: "Old apps frustrate canvassers. Our mobile experience is intuitive, lowering the barrier to entry." },
-    { icon: <Smartphone />, title: "Slow Onboarding", text: "Get field offices up and running in minutes, not weeks of technical training." },
-    { icon: <EyeOff />, title: "Poor Transparency", text: "Real-time reporting shouldn't be a luxury. Track progress live as it happens on the doors." }
-  ];
-
-  return (
-    <section className="py-24 bg-primary-container text-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-display text-4xl font-bold mb-6">The high cost of legacy campaign tools.</h2>
-          <p className="text-on-primary-container max-w-2xl mx-auto text-lg">
-            Modern organizing requires tools that move as fast as your volunteers. Legacy software holds your data hostage and drains your budget.
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {problems.map((p, i) => (
-            <div key={i} className="border border-on-primary-container/20 p-8 rounded-lg hover:bg-white/5 transition-all group">
-              <div className="text-secondary-container mb-6 group-hover:scale-110 transition-transform duration-300">
-                {p.icon}
-              </div>
-              <h3 className="font-display text-xl font-bold mb-3">{p.title}</h3>
-              <p className="text-on-primary-container leading-relaxed">{p.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const ComparisonTable = () => {
-  const rows = [
-    { metric: "Source Model", blue: "Open Source (AGPLv3)", legacy: "Proprietary / Black Box", icon: <Code size={16} /> },
-    { metric: "Custom Workflows", blue: "Infinite via API & Extensibility", legacy: "Limited to pre-set modules", icon: <Zap size={16} /> },
-    { metric: "Access Policy", blue: "Available to all Blue campaigns", legacy: "Often restricted by scale", icon: <Globe size={16} /> },
-    { metric: "Volunteer UX", blue: "Mobile-first, Latency-free", legacy: "Laggy web-views, drop-off", icon: <Smartphone size={16} /> },
-    { metric: "Data Portability", blue: "Full Postgres SQL access", legacy: "Restricted exports / Locked", icon: <Download size={16} /> },
-    { metric: "Roadmap Control", blue: "Community-driven features", legacy: "Corporate-driven priorities", icon: <Users size={16} /> }
-  ];
-
-  return (
-    <section className="py-24 bg-surface">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-display text-5xl font-bold text-primary tracking-tight">The Open-Source Alternative to NGP VAN</h2>
-          <p className="text-on-surface-variant mt-4 text-lg">A direct comparison of infrastructure philosophy and performance.</p>
-        </div>
-        <div className="overflow-hidden rounded-xl border border-outline-variant shadow-xl bg-white">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-surface-container-low border-b border-outline-variant">
-                <th className="p-6 text-left font-mono text-[10px] font-bold text-primary uppercase tracking-widest w-1/4">Metric</th>
-                <th className="p-6 text-left font-mono text-[10px] font-bold text-primary bg-secondary-container/10 uppercase tracking-widest w-3/8">Blue North (Modern)</th>
-                <th className="p-6 text-left font-mono text-[10px] font-bold text-on-surface-variant uppercase tracking-widest w-3/8">Legacy Tools (Standard)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-outline-variant">
-              {rows.map((row, i) => (
-                <tr key={i} className="hover:bg-surface-container-low/50 transition-colors">
-                  <td className="p-6 font-bold text-primary">{row.metric}</td>
-                  <td className="p-6 bg-secondary-container/5">
-                    <div className="flex items-center gap-2 text-secondary font-medium">
-                      {row.icon}
-                      {row.blue}
-                    </div>
-                  </td>
-                  <td className="p-6 text-on-surface-variant">{row.legacy}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Features = () => (
-  <section className="py-24 bg-surface-container-low">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-        <div>
-          <span className="font-mono text-xs font-bold text-secondary mb-2 block uppercase tracking-widest">CORE CAPABILITIES</span>
-          <h2 className="font-display text-4xl font-bold text-primary tracking-tight">Precision tools for high-intensity field ops.</h2>
-        </div>
-        <button className="text-primary font-bold flex items-center gap-2 hover:gap-4 transition-all duration-300">
-          Explore all technical specs
-          <ArrowRight size={20} />
-        </button>
-      </div>
-
-      <div className="grid md:grid-cols-12 gap-6">
-        <div className="md:col-span-8 bg-white border border-outline-variant p-10 rounded-xl relative overflow-hidden group shadow-sm">
-          <div className="relative z-10">
-            <Map className="text-primary w-10 h-10 mb-6" />
-            <h3 className="font-display text-2xl font-bold mb-4">Advanced Turf Cutting</h3>
-            <p className="text-on-surface-variant max-w-sm leading-relaxed">
-              Our geospatial engine allows for sub-meter precision in turf assignment. Use heatmaps to visualize density and cut walking lists with automated route optimization.
+          {status === 'needs-endpoint' && (
+            <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
+              Signup form is ready. Connect a Google Apps Script endpoint to send this to the spreadsheet.
             </p>
-          </div>
-          <div className="absolute right-0 bottom-0 w-64 h-64 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-            <Map size={256} className="text-primary" />
-          </div>
-        </div>
-
-        <div className="md:col-span-4 bg-primary text-white p-10 rounded-xl shadow-lg flex flex-col justify-between">
-          <div>
-            <Database className="text-secondary-container w-10 h-10 mb-6" />
-            <h3 className="font-display text-2xl font-bold mb-4">Voter File Management</h3>
-            <p className="text-on-primary-container leading-relaxed">
-              Import and normalize raw voter data from multiple sources. Maintain a single source of truth for the entire campaign.
+          )}
+          {status === 'success' && (
+            <p className="mt-4 rounded-md bg-secondary/10 p-3 text-sm font-semibold text-secondary">
+              You are on the list.
             </p>
-          </div>
-        </div>
-
-        <div className="md:col-span-4 bg-white border border-outline-variant p-10 rounded-xl shadow-sm">
-          <PhoneCall className="text-primary w-10 h-10 mb-6" />
-          <h3 className="font-display text-2xl font-bold mb-4">Phone Bank Sync</h3>
-          <p className="text-on-surface-variant leading-relaxed">
-            Integrated VOIP and predictive dialing systems that sync results directly to your field reports in real-time.
-          </p>
-        </div>
-
-        <div className="md:col-span-8 bg-surface-container text-primary p-10 rounded-xl border border-outline-variant shadow-sm overflow-hidden">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
-            <div>
-              <Terminal className="text-primary w-10 h-10 mb-6" />
-              <h3 className="font-display text-2xl font-bold mb-4">Open Data Architecture</h3>
-              <p className="text-on-surface-variant leading-relaxed">
-                Built on a robust PostgreSQL backend with a GraphQL API. Connect your own BI tools and custom scripts without friction.
-              </p>
-            </div>
-            <div className="bg-primary-container p-6 rounded-lg font-mono text-[11px] text-secondary-container shadow-inner overflow-x-auto">
-              <div className="opacity-50 mb-2"># Fetch live field data</div>
-              <div className="flex gap-2">
-                <span className="text-white">query</span>
-                <span>{'{'}</span>
-              </div>
-              <div className="pl-4 flex gap-2">
-                <span className="text-white">turf</span>
-                <span>(id: "T-102") {'{'}</span>
-              </div>
-              <div className="pl-8 text-white">voters_contacted</div>
-              <div className="pl-8 text-white">sync_status</div>
-              <div className="pl-4">{'}'}</div>
-              <div>{'}'}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-const FieldReality = () => (
-  <section className="py-24 bg-white overflow-hidden">
-    <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-      <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
-        <img 
-          src="https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&q=80&w=1200" 
-          alt="Field work" 
-          className="w-full aspect-video object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
-        <div className="absolute bottom-8 left-8">
-          <p className="font-mono text-[10px] text-white/70 mb-1 uppercase tracking-widest">LOCATION: PRECINCT_342_A</p>
-          <p className="font-display text-2xl font-bold text-secondary-container uppercase tracking-tight">LIVESYNC ACTIVE</p>
-        </div>
-      </div>
-
-      <div>
-        <span className="font-mono text-xs font-bold text-secondary mb-4 block uppercase tracking-widest">THE REALITY OF THE FIELD</span>
-        <h2 className="font-display text-5xl font-bold text-primary mb-8 tracking-tight">Built for the midnight turf cut.</h2>
-        <p className="text-xl text-on-surface-variant mb-6 leading-relaxed">
-          We know what it’s like. It’s 11 PM, the volunteers arrive at 8 AM, and you still have 40 turfs to cut. Legacy software slows you down with spinning wheels.
-        </p>
-        <p className="text-on-surface-variant mb-10 leading-relaxed">
-          Blue North was built by organizers who have spent years in the trenches. Every feature, from the bulk-assign tools to the offline mobile sync, is designed to save you precious minutes when they matter most.
-        </p>
-        <div className="flex gap-12 border-t border-outline-variant pt-10">
-          <div>
-            <p className="font-display text-5xl font-bold text-secondary tracking-tighter">0ms</p>
-            <p className="font-mono text-[10px] text-on-surface-variant font-bold uppercase mt-2 tracking-widest">LATENCY TARGET</p>
-          </div>
-          <div>
-            <p className="font-display text-5xl font-bold text-secondary tracking-tighter">100%</p>
-            <p className="font-mono text-[10px] text-on-surface-variant font-bold uppercase mt-2 tracking-widest">OFFLINE SYNC</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-const FAQ = () => {
-  const [open, setOpen] = useState<number | null>(null);
-  const questions = [
-    { q: "Who owns the data I import?", a: "You do. Period. Blue North is a tool, not a data broker. Your database is yours to export or delete at any time." },
-    { q: "Can I import my existing VAN data?", a: "Yes. We have built-in mapping tools to ingest standard field exports from NGP VAN and other legacy providers." },
-    { q: "Is it really 'Open Source'?", a: "Yes. The core engine is licensed under AGPLv3. You can audit the code on GitHub today." }
-  ];
-
-  return (
-    <section className="py-24 bg-surface">
-      <div className="max-w-3xl mx-auto px-6">
-        <h2 className="font-display text-4xl font-bold text-primary text-center mb-16 tracking-tight">Frequently Asked Questions</h2>
-        <div className="space-y-4">
-          {questions.map((item, i) => (
-            <div key={i} className="border-b border-outline-variant">
-              <button 
-                onClick={() => setOpen(open === i ? null : i)}
-                className="w-full py-6 flex justify-between items-center text-left hover:text-primary transition-colors group"
-              >
-                <span className="font-display text-xl font-semibold">{item.q}</span>
-                <ChevronDown className={`transition-transform duration-300 ${open === i ? 'rotate-180' : ''}`} />
-              </button>
-              <AnimatePresence>
-                {open === i && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <p className="pb-6 text-on-surface-variant leading-relaxed">{item.a}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-        </div>
+          )}
+          {status === 'error' && (
+            <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
+              Something went wrong. Please try again.
+            </p>
+          )}
+        </form>
       </div>
     </section>
   );
-};
+}
 
-const CTA = () => {
-  const [isHovered, setIsHovered] = useState(false);
+function Footer() {
   return (
-    <section className="py-32 bg-primary relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10 grid-bg rotate-12 scale-150"></div>
-      <div className="max-w-3xl mx-auto px-6 relative z-10 text-center">
-        <h2 className="font-display text-5xl font-bold text-white mb-6 tracking-tight">Build field power without legacy software drag.</h2>
-        <p className="text-xl text-on-primary-container mb-12 max-w-xl mx-auto">
-          Join the movement of organizers building the future of civic tech. Modern, open, and fast.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <button 
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="bg-secondary-container text-on-secondary-container px-10 py-5 rounded-lg font-display text-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-xl"
-          >
-            Request Access
-          </button>
-          <button className="bg-primary-container text-white border border-white/20 px-10 py-5 rounded-lg font-display text-xl font-bold hover:bg-primary-container/80 transition-all">
-            Book a Demo
-          </button>
+    <footer className="bg-primary py-12 text-white">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 md:flex-row md:items-center md:justify-between md:px-8">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-white/10">
+            <Vote size={22} />
+          </span>
+          <div>
+            <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
+            <p className="text-sm text-on-primary-container">Canvassing and voter data for Democratic campaigns.</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-5 text-sm font-semibold text-on-primary-container">
+          <span>Made in America</span>
+          <span>American-owned</span>
+          <span>Built to win</span>
         </div>
       </div>
-    </section>
+    </footer>
   );
-};
-
-const Footer = () => (
-  <footer className="py-24 bg-primary border-t border-white/10 text-white/60">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="grid md:grid-cols-2 gap-16 mb-16">
-        <div>
-          <div className="flex items-center gap-2 mb-6 text-white">
-            <div className="w-8 h-8 bg-white/10 rounded-sm flex items-center justify-center">
-              <Map size={18} className="text-secondary-container" />
-            </div>
-            <span className="font-display font-bold text-xl tracking-tight">Blue North</span>
-          </div>
-          <p className="text-sm max-w-xs leading-relaxed text-on-primary-container">
-            © 2024 Blue North. An insurgent tool for modern organizers. Open data, open code. Built for the movement.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
-          <div>
-            <h4 className="font-mono text-[10px] font-bold text-secondary-container uppercase mb-6 tracking-widest">PLATFORM</h4>
-            <div className="flex flex-col gap-4 text-sm">
-              <a href="#" className="hover:text-white transition-colors">Documentation</a>
-              <a href="#" className="hover:text-white transition-colors">GitHub Repo</a>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-mono text-[10px] font-bold text-secondary-container uppercase mb-6 tracking-widest">LEGAL</h4>
-            <div className="flex flex-col gap-4 text-sm">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Security</a>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-mono text-[10px] font-bold text-secondary-container uppercase mb-6 tracking-widest">SYSTEM</h4>
-            <div className="flex flex-col gap-4 text-sm">
-              <a href="#" className="hover:text-white transition-colors">Status</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
-
-// --- Main App ---
+}
 
 export default function App() {
   return (
@@ -462,15 +511,14 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <ProblemSection />
-        <ComparisonTable />
-        <Features />
-        <FieldReality />
-        <FAQ />
-        <CTA />
+        <Platform />
+        <WhyUs />
+        <Ownership />
+        <Direction />
+        <States />
+        <Signup />
       </main>
       <Footer />
     </div>
   );
 }
-
