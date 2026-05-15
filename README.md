@@ -53,6 +53,6 @@ Until that endpoint is configured, the form renders normally but displays a conn
 
 GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
 
-The Vite `base` option is set to `/landing/` because this site is served from the `RunVoteWin/landing` repository path.
+The Vite `base` option is set to `./` so the static build works from both the custom domain root and the fallback `runvotewin.github.io/landing/` path.
 
 In GitHub Pages settings, the source should be **GitHub Actions**. Do not serve the repository root directly; that serves `src/main.tsx` instead of the static `dist` build and will fail in the browser.
