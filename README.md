@@ -1,6 +1,6 @@
-# Blue North Landing Page
+# RunVoteWin Landing Page
 
-Landing page for Blue North, built with Vite, React, Tailwind CSS, Motion, and Lucide icons.
+Landing page for RunVoteWin, a modern canvassing and voter data system for Democratic Party campaigns.
 
 Live site: https://runvotewin.github.io/landing/
 
@@ -35,8 +35,24 @@ Build for production:
 npm run build
 ```
 
+## Signup Form
+
+The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google Apps Script web app URL that accepts this JSON payload:
+
+```json
+{
+  "name": "Jane Organizer",
+  "email": "jane@campaign.org",
+  "source": "RunVoteWin landing page"
+}
+```
+
+Until that endpoint is configured, the form renders normally but displays a connection-needed message on submit.
+
 ## Deployment
 
 GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
 
 The Vite `base` option is set to `/landing/` because this site is served from the `RunVoteWin/landing` repository path.
+
+In GitHub Pages settings, the source should be **GitHub Actions**. Do not serve the repository root directly; that serves `src/main.tsx` instead of the static `dist` build and will fail in the browser.
