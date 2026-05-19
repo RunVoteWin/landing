@@ -21,6 +21,7 @@ import {
 
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 const appUrl = 'https://app.runvotewin.com';
+const docsUrl = 'https://docs.runvotewin.com';
 
 type SignupFormVariant = 'hero' | 'compact';
 
@@ -41,7 +42,11 @@ const navItems = [
   { label: 'Pricing', href: '#pricing' },
   { label: 'Integrations', href: '#integrations' },
   { label: 'Compare', href: '#compare' },
+  { label: 'Docs', href: docsUrl },
 ];
+
+const testimonialQuote =
+  "After I ran for Congress, I realized how far behind Democratic campaigns were on knowing our voters. I needed RunVoteWin's modern Voter CRM and Canvassing Suite to spend our funding more effectively than any other campaign. It's ages ahead of any other product and is built by Americans.";
 
 const proofPoints = [
   { value: '135%', label: 'more efficient turf cutting' },
@@ -612,6 +617,38 @@ function Pricing() {
   );
 }
 
+function Testimonials() {
+  return (
+    <section className="bg-white py-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="overflow-hidden rounded-2xl border border-outline-variant bg-surface shadow-xl lg:grid lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="relative min-h-[360px] bg-primary lg:min-h-full">
+            <img
+              src="joe-schiarizzi-headshot.jpg"
+              alt="Joe Schiarizzi, U.S. Congressional candidate for Virginia's 7th District"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/45 via-transparent to-transparent lg:bg-gradient-to-r" />
+          </div>
+
+          <div className="p-8 md:p-12 lg:p-14">
+            <p className="mb-4 text-sm font-extrabold uppercase text-accent">Trusted by candidates</p>
+            <blockquote className="font-display text-3xl font-extrabold leading-tight text-primary md:text-4xl">
+              “{testimonialQuote}”
+            </blockquote>
+            <div className="mt-8 border-t border-outline-variant pt-6">
+              <p className="font-display text-2xl font-extrabold text-primary">Joe Schiarizzi</p>
+              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-on-surface-variant">
+                U.S. Congressional candidate, VA-07
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Integrations() {
   return (
     <section id="integrations" className="bg-surface-container-low py-24">
@@ -796,6 +833,9 @@ function Footer() {
         </div>
 
         <div className="flex flex-wrap gap-5 text-sm font-semibold text-on-primary-container">
+          <a href={docsUrl} className="transition hover:text-white">
+            Docs
+          </a>
           <span>Made in America</span>
           <span>American-owned</span>
           <span>Built to win</span>
@@ -813,6 +853,7 @@ export default function App() {
         <Hero />
         <Platform />
         <Pricing />
+        <Testimonials />
         <Integrations />
         <Comparison />
         <Ownership />
