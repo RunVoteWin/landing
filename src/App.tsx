@@ -1156,6 +1156,7 @@ function Footer() {
           <div>
             <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
             <p className="text-sm text-on-primary-container">Fast, reliable voter-contact software for winning Democratic campaigns.</p>
+            <p className="mt-2 text-xs font-medium text-white/55">Made with 💪 in Virginia and Texas. | © 2026 Solarpunk LLC.</p>
           </div>
         </div>
 
