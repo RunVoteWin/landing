@@ -537,18 +537,26 @@ function HumanProof() {
 }
 
 function Pricing() {
-  const [campaignId, setCampaignId] = useState('congressional');
-  const [role, setRole] = useState('candidate');
+  const [campaignId, setCampaignId] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
 
-  const selectedCampaign = campaignOptions.find((option) => option.id === campaignId) ?? campaignOptions[2];
+  const selectedCampaign = useMemo(
+    () => campaignOptions.find((option) => option.id === campaignId) ?? null,
+    [campaignId],
+  );
 
-  const monthlyTotal = useMemo(() => selectedCampaign.price, [selectedCampaign.price]);
+  const monthlyTotal = selectedCampaign?.price ?? null;
+  const canShowEstimate = Boolean(selectedCampaign && role);
 
   async function handlePricingSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!selectedCampaign || !role || monthlyTotal === null) {
+      return;
+    }
 
     if (!signupEndpoint) {
       setStatus('needs-endpoint');
@@ -602,7 +610,7 @@ function Pricing() {
             </div>
 
             <div>
-              <p className="mb-3 text-sm font-extrabold uppercase text-primary">Campaign size</p>
+              <p className="mb-3 text-sm font-extrabold uppercase text-primary">Step 1 · Campaign size</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {campaignOptions.map((option) => (
                   <button
@@ -617,7 +625,7 @@ function Pricing() {
                   >
                     <span className="flex items-center justify-between gap-3">
                       <span className="font-display text-xl font-extrabold text-primary">{option.label}</span>
-                      <span className="text-sm font-bold text-accent">{formatPrice(option.price)}/mo</span>
+                      <span className="text-sm font-bold text-accent">Choose</span>
                     </span>
                     <span className="mt-2 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
                   </button>
@@ -653,7 +661,7 @@ function Pricing() {
               </div>
 
               <div>
-                <p className="mb-2 text-sm font-bold text-primary">Your role</p>
+                <p className="mb-2 text-sm font-extrabold uppercase text-primary">Step 2 · Your role</p>
                 <div className="grid gap-2">
                   {roleOptions.map((option) => (
                     <label
@@ -680,24 +688,35 @@ function Pricing() {
             </div>
 
             <div className="mt-7 rounded-lg bg-primary p-6 text-white">
-              <p className="text-sm font-bold uppercase text-secondary-container">Estimated platform price</p>
-              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
-                  <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
+              <p className="text-sm font-bold uppercase text-secondary-container">Step 3 · Estimate</p>
+              {canShowEstimate && monthlyTotal !== null ? (
+                <>
+                  <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
+                      <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={status === 'loading'}
+                      className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
+                      <ArrowRight size={18} />
+                    </button>
+                  </div>
+                  <p className="mt-5 text-sm leading-6 text-on-primary-container">
+                    Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
+                  </p>
+                </>
+              ) : (
+                <div className="mt-3 rounded-md border border-white/15 bg-white/10 p-5">
+                  <p className="font-display text-2xl font-extrabold">Answer the two questions above to reveal pricing.</p>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-on-primary-container">
+                    We hide the number until the campaign size and role are selected so the estimator feels like a quick guided flow, not a static rate card.
+                  </p>
                 </div>
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
-                  <ArrowRight size={18} />
-                </button>
-              </div>
-              <p className="mt-5 text-sm leading-6 text-on-primary-container">
-                Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
-              </p>
+              )}
               {status === 'needs-endpoint' && (
                 <p className="mt-4 rounded-md bg-white/10 p-3 text-sm font-semibold leading-6 text-white">
                   Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
