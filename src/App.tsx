@@ -1071,13 +1071,13 @@ function WinForLifePage() {
         </div>
       </section>
 
-      <section className="bg-primary py-24 text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.85fr_1fr] lg:items-start">
-          <div>
+      <section className="bg-primary py-20 text-white">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="max-w-3xl">
             <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">FAQ</p>
             <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">Straight answers before you buy.</h2>
           </div>
-          <div className="grid gap-4">
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
             <FAQItem
               question="How can we afford to do this?"
               answer="The Founding Victory Pass helps bootstrap the growth we have planned. Data storage costs have fallen by more than 90% over the last decade. Campaigns are just used to being overcharged by legacy vendors."
@@ -1138,7 +1138,7 @@ function FeatureList({ title, items }: { title: string; items: string[] }) {
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <article className="rounded-lg border border-white/15 bg-white/8 p-6">
+    <article className="flex h-full flex-col rounded-lg border border-white/15 bg-white/8 p-6 shadow-sm">
       <h3 className="font-display text-2xl font-extrabold text-white">{question}</h3>
       <p className="mt-3 leading-7 text-on-primary-container">{answer}</p>
     </article>
