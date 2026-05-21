@@ -54,6 +54,8 @@ const organizingPhotoUrl =
   'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85';
 const protestPhotoUrl =
   'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1200&q=85';
+const placeholderCandidatePhotoUrl =
+  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=85';
 
 const testimonialQuote =
   "After I ran for Congress, I realized how far behind Democratic campaigns were on knowing our voters. I needed RunVoteWin's modern Voter CRM and Canvassing Suite to spend our funding more effectively than any other campaign. It's ages ahead of any other product and is built by Americans.";
@@ -720,31 +722,55 @@ function Pricing() {
 }
 
 function Testimonials() {
+  const testimonials = [
+    {
+      quote: testimonialQuote,
+      name: 'Joe Schiarizzi',
+      role: 'U.S. Congressional candidate, VA-07',
+      image: 'joe-schiarizzi-headshot.jpg',
+      alt: "Joe Schiarizzi, U.S. Congressional candidate for Virginia's 7th District",
+    },
+    {
+      quote:
+        'Placeholder launch-partner quote: RunVoteWin gives our team the speed and data continuity we need to organize aggressively without fighting legacy software.',
+      name: 'Launch Partner',
+      role: 'Campaign director testimonial placeholder',
+      image: placeholderCandidatePhotoUrl,
+      alt: 'Placeholder portrait of a campaign leader',
+    },
+  ];
+
   return (
     <section className="bg-white py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="overflow-hidden rounded-2xl border border-outline-variant bg-surface shadow-xl lg:grid lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="relative min-h-[360px] bg-primary lg:min-h-full">
-            <img
-              src="joe-schiarizzi-headshot.jpg"
-              alt="Joe Schiarizzi, U.S. Congressional candidate for Virginia's 7th District"
-              className="absolute inset-0 h-full w-full object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/45 via-transparent to-transparent lg:bg-gradient-to-r" />
-          </div>
+        <div className="mb-10 max-w-3xl">
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Trusted by candidates and operators</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Built for the people who have to win the race.
+          </h2>
+        </div>
 
-          <div className="p-8 md:p-12 lg:p-14">
-            <p className="mb-4 text-sm font-extrabold uppercase text-accent">Trusted by candidates</p>
-            <blockquote className="font-display text-3xl font-extrabold leading-tight text-primary md:text-4xl">
-              “{testimonialQuote}”
-            </blockquote>
-            <div className="mt-8 border-t border-outline-variant pt-6">
-              <p className="font-display text-2xl font-extrabold text-primary">Joe Schiarizzi</p>
-              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-on-surface-variant">
-                U.S. Congressional candidate, VA-07
-              </p>
-            </div>
-          </div>
+        <div className="grid gap-5 lg:grid-cols-2">
+          {testimonials.map((testimonial) => (
+            <article key={testimonial.name} className="rounded-2xl border border-outline-variant bg-surface p-8 shadow-xl md:p-10">
+              <blockquote className="font-display text-2xl font-extrabold leading-tight text-primary md:text-3xl">
+                “{testimonial.quote}”
+              </blockquote>
+              <div className="mt-8 flex items-center gap-4 border-t border-outline-variant pt-6">
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.alt}
+                  className="h-16 w-16 shrink-0 rounded-full border-4 border-white object-cover object-center shadow-lg"
+                />
+                <div>
+                  <p className="font-display text-2xl font-extrabold text-primary">{testimonial.name}</p>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-on-surface-variant">
+                    {testimonial.role}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
