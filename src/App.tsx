@@ -21,6 +21,7 @@ import {
   User,
   Users,
   Vote,
+  XCircle,
 } from 'lucide-react';
 
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
@@ -146,36 +147,13 @@ const integrations = [
 ];
 
 const comparisonRows = [
-  {
-    label: 'Ownership',
-    runVoteWin: 'Made in America, by Americans, and 100% American-owned.',
-    ngp: 'Private-equity ownership with foreign sovereign fund exposure reported in the ownership chain.',
-  },
-  {
-    label: 'Pricing',
-    runVoteWin: 'Clear starting prices and an estimate before a sales call.',
-    ngp: 'Pricing is often unclear until a campaign goes through a local-party or sales process.',
-  },
-  {
-    label: 'Access',
-    runVoteWin: 'Get started directly when your campaign is ready.',
-    ngp: 'Access can depend on party approval, local committee timelines, or cycle-specific provisioning.',
-  },
-  {
-    label: 'Vote builder',
-    runVoteWin: 'Interactive vote builder designed for fast universe planning and iteration.',
-    ngp: 'Less interactive list-building experience for rapid field experimentation.',
-  },
-  {
-    label: 'Turf cutter',
-    runVoteWin: 'Intelligent turf cutter built with modern geospatial technology.',
-    ngp: 'Traditional turf cutter with partial efficiency gains.',
-  },
-  {
-    label: 'Continuity',
-    runVoteWin: 'Keep your access, workspace, and data continuity across future campaigns.',
-    ngp: 'Access and data continuity can reset or disappear between campaign cycles.',
-  },
+  { label: 'American-owned', runVoteWin: true, ngp: false },
+  { label: 'Transparent pricing', runVoteWin: true, ngp: false },
+  { label: 'Direct campaign access', runVoteWin: true, ngp: false },
+  { label: 'Fast vote-builder workflows', runVoteWin: true, ngp: false },
+  { label: 'Modern turf cutting', runVoteWin: true, ngp: false },
+  { label: 'Data continuity between cycles', runVoteWin: true, ngp: false },
+  { label: 'Built for rapid feature requests', runVoteWin: true, ngp: false },
 ];
 
 const states = ['Texas', 'Virginia'];
@@ -843,26 +821,25 @@ function Comparison() {
         </div>
 
         <div className="overflow-hidden rounded-lg border border-white/15 bg-white/7">
-          <div className="grid gap-4 border-b border-white/15 bg-white/10 p-5 md:grid-cols-[0.32fr_1fr_1fr]">
-            <div className="hidden md:block"></div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl" aria-label="United States flag">🇺🇸</span>
-              <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
+          <div className="grid grid-cols-[1fr_0.38fr_0.38fr] gap-3 border-b border-white/15 bg-white/10 p-4 sm:p-5">
+            <div className="font-display text-lg font-extrabold text-secondary-container sm:text-xl">Feature</div>
+            <div className="flex items-center justify-center gap-2 text-center">
+              <span className="hidden text-2xl sm:inline" aria-label="United States flag">🇺🇸</span>
+              <p className="font-display text-lg font-extrabold sm:text-2xl">RunVoteWin</p>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl" aria-label="Saudi Arabia flag">🇸🇦</span>
-              <img src="ngpvan-logo.svg" alt="NGP VAN" className="h-7 w-auto rounded bg-white px-2 py-1" />
+            <div className="flex items-center justify-center gap-2 text-center">
+              <img src="ngpvan-logo.svg" alt="NGP VAN" className="h-6 w-auto rounded bg-white px-2 py-1 sm:h-7" />
             </div>
           </div>
 
           {comparisonRows.map((row) => (
-            <div key={row.label} className="grid gap-5 border-b border-white/12 p-5 last:border-b-0 md:grid-cols-[0.32fr_1fr_1fr]">
-              <p className="font-display text-xl font-extrabold text-secondary-container">{row.label}</p>
-              <div className="rounded-md bg-white/8 p-4">
-                <p className="leading-7 text-white">{row.runVoteWin}</p>
+            <div key={row.label} className="grid grid-cols-[1fr_0.38fr_0.38fr] items-center gap-3 border-b border-white/12 p-4 last:border-b-0 sm:p-5">
+              <p className="font-display text-lg font-extrabold text-white sm:text-xl">{row.label}</p>
+              <div className="flex justify-center">
+                <CheckCircle2 className="h-9 w-9 rounded-full bg-emerald-400/18 p-1 text-emerald-300" aria-label="Included" />
               </div>
-              <div className="rounded-md bg-black/12 p-4">
-                <p className="leading-7 text-on-primary-container">{row.ngp}</p>
+              <div className="flex justify-center">
+                <XCircle className="h-9 w-9 rounded-full bg-red-500/18 p-1 text-red-300" aria-label="Not included" />
               </div>
             </div>
           ))}
