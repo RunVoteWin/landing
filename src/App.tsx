@@ -2,16 +2,20 @@ import { FormEvent, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowRight,
+  Award,
   BarChart3,
   CheckCircle2,
   Database,
   FileSpreadsheet,
   Flag,
   HeartHandshake,
+  Infinity,
+  LifeBuoy,
   Mail,
   Map,
   MapPinned,
   RadioTower,
+  Rocket,
   ShieldCheck,
   SlidersHorizontal,
   User,
@@ -20,6 +24,7 @@ import {
 } from 'lucide-react';
 
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
+const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? '';
 const appUrl = 'https://app.runvotewin.com';
 const docsUrl = 'https://docs.runvotewin.com';
 
@@ -38,11 +43,11 @@ type RoleOption = {
 };
 
 const navItems = [
-  { label: 'Platform', href: '#platform' },
-  { label: 'Proof', href: '#proof' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Integrations', href: '#integrations' },
-  { label: 'Compare', href: '#compare' },
+  { label: 'Platform', href: '/#platform' },
+  { label: 'Proof', href: '/#proof' },
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'Integrations', href: '/#integrations' },
+  { label: 'Compare', href: '/#compare' },
 ];
 
 const organizingPhotoUrl =
@@ -173,6 +178,33 @@ const comparisonRows = [
 
 const states = ['Texas', 'Virginia'];
 
+const lifetimeBenefits = [
+  'One candidate seat covered for every future campaign',
+  'All RunVoteWin features available today',
+  'All future product features included as they ship',
+  'Keep your campaign data at the end of each cycle',
+  'Premium launch-partner support and onboarding',
+  'Feature requests reviewed directly by the product team',
+];
+
+const currentFeatures = [
+  'Voter CRM and campaign workspace',
+  'Fast turf cutting and walk-list planning',
+  'Canvassing workflows and contact history',
+  'Imports from spreadsheets, VAN exports, and supporter lists',
+  'Readable field reporting for managers and candidates',
+  'Data continuity across supported campaign cycles',
+];
+
+const plannedFeatures = [
+  'Google login and account workspaces',
+  'Role-based permissions for candidates, managers, staff, and volunteers',
+  'Scalable Supabase-backed API for fast feature development',
+  'React Native contact-import app for iOS and Android',
+  'Deeper reporting, targeting, and voter-universe tools',
+  'More integrations and more supported states',
+];
+
 function formatPrice(value: number) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -287,11 +319,24 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
   );
 }
 
+function LifetimeBanner() {
+  return (
+    <a
+      href="/win-for-life"
+      className="block bg-secondary-container px-4 py-2 text-center text-xs font-extrabold leading-5 text-primary transition hover:bg-white sm:text-sm"
+    >
+      For a limited time, before July 2026, buy a lifetime license — no subscription needed. Keep your data between all campaigns forever.{' '}
+      <span className="underline underline-offset-2">Learn more →</span>
+    </a>
+  );
+}
+
 function Navbar() {
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface/88 backdrop-blur-xl">
+      <LifetimeBanner />
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-4 md:px-8">
-        <a href="#" className="flex min-w-0 items-center gap-3 text-primary">
+        <a href="/" className="flex min-w-0 items-center gap-3 text-primary">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-white shadow-sm">
             <Vote size={22} />
           </span>
@@ -875,6 +920,186 @@ function FinalCTA() {
   );
 }
 
+function WinForLifePage() {
+  const checkoutHref =
+    lifetimeCheckoutUrl ||
+    'mailto:sales@runvotewin.com?subject=RunVoteWin%20Founding%20Victory%20Pass&body=I%20want%20to%20buy%20a%20Founding%20Victory%20Pass.';
+
+  return (
+    <main>
+      <section className="relative overflow-hidden bg-primary pt-36 text-white md:pt-40">
+        <div className="absolute inset-0 opacity-35">
+          <img src={organizingPhotoUrl} alt="Campaign organizers working together" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-primary/75 mix-blend-multiply" />
+        </div>
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-5 pb-20 md:px-8 lg:grid-cols-[1fr_0.78fr] lg:items-center lg:pb-24">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary-container/40 bg-white/10 px-4 py-2 text-sm font-extrabold text-secondary-container backdrop-blur">
+              <Award size={17} />
+              Founding Victory Pass · Available before July 2026
+            </div>
+            <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight md:text-7xl">
+              Buy RunVoteWin once. Keep your campaign data forever.
+            </h1>
+            <p className="mt-7 max-w-2xl text-xl font-semibold leading-8 text-on-primary-container">
+              Early launch partners can lock in lifetime access for one candidate: premium support, direct feature requests, every feature we build, and data continuity from campaign to campaign.
+            </p>
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+              <a
+                href={checkoutHref}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-secondary-container px-7 py-4 font-display text-lg font-extrabold text-primary shadow-xl transition hover:bg-white"
+              >
+                Buy Now — $10,000
+                <ArrowRight size={20} />
+              </a>
+              <a
+                href="/"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-white/25 bg-white/10 px-7 py-4 font-display text-lg font-extrabold text-white backdrop-blur transition hover:bg-white/18"
+              >
+                Back to platform
+              </a>
+            </div>
+            {!lifetimeCheckoutUrl && (
+              <p className="mt-4 max-w-xl rounded-md border border-white/20 bg-white/10 p-3 text-sm font-semibold text-on-primary-container backdrop-blur">
+                Stripe checkout is ready to connect. Add VITE_WIN_FOR_LIFE_CHECKOUT_URL to point this button at the live Stripe payment link.
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-white/18 bg-white/12 p-6 shadow-2xl backdrop-blur-xl">
+            <p className="text-sm font-extrabold uppercase text-secondary-container">Lifetime launch price</p>
+            <p className="mt-3 font-display text-6xl font-extrabold">$10,000</p>
+            <p className="mt-3 text-lg font-semibold leading-7 text-on-primary-container">
+              No subscription for the covered candidate. No losing your workspace after the cycle. No paying legacy rent forever.
+            </p>
+            <div className="mt-7 grid gap-3">
+              {lifetimeBenefits.map((benefit) => (
+                <div key={benefit} className="flex gap-3 rounded-md bg-white/10 p-3">
+                  <CheckCircle2 className="mt-0.5 shrink-0 text-secondary-container" size={20} />
+                  <p className="font-semibold leading-6">{benefit}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-24">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.75fr_1fr] lg:items-start">
+            <div>
+              <p className="mb-4 text-sm font-extrabold uppercase text-accent">Why join early</p>
+              <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+                Become a Founding Victory Partner.
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-on-surface-variant">
+                “Premiere Launch Partner User” is the idea. The sharper name is <strong>Founding Victory Partner</strong>: campaigns that help bootstrap RunVoteWin now and get permanent access before everyone else is paying monthly.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { icon: Infinity, title: 'Lifetime access', text: 'One candidate can use RunVoteWin for future campaigns without a subscription.' },
+                { icon: LifeBuoy, title: 'Premium support', text: 'Launch-partner support for setup, onboarding, imports, and serious campaign questions.' },
+                { icon: Rocket, title: 'Feature influence', text: 'Request features and help shape the platform while we are still moving fast.' },
+                { icon: Database, title: 'Data continuity', text: 'Keep your campaign data after the current cycle and carry institutional memory forward.' },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <article key={item.title} className="rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-md bg-primary text-white">
+                      <Icon size={24} />
+                    </div>
+                    <h3 className="font-display text-2xl font-extrabold text-primary">{item.title}</h3>
+                    <p className="mt-3 leading-7 text-on-surface-variant">{item.text}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-surface-container-low py-24">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 md:px-8 lg:grid-cols-2">
+          <FeatureList title="What features are there now?" items={currentFeatures} />
+          <FeatureList title="What features are planned?" items={plannedFeatures} />
+        </div>
+      </section>
+
+      <section className="bg-primary py-24 text-white">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.85fr_1fr] lg:items-start">
+          <div>
+            <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">FAQ</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">Straight answers before you buy.</h2>
+          </div>
+          <div className="grid gap-4">
+            <FAQItem
+              question="How can we afford to do this?"
+              answer="The Founding Victory Pass helps bootstrap the growth we have planned. Data storage costs have fallen by more than 90% over the last decade. Campaigns are just used to being overcharged by legacy vendors."
+            />
+            <FAQItem
+              question="What does the license cover?"
+              answer="The license covers all current RunVoteWin features, all future RunVoteWin features, premium launch-partner support, and data continuity for one candidate across future campaigns."
+            />
+            <FAQItem
+              question="Is this for a campaign, a committee, or a candidate?"
+              answer="This offer is scoped to one candidate. The candidate can keep access to their RunVoteWin campaign data across future races instead of starting over every cycle."
+            />
+            <FAQItem
+              question="What happens after July 2026?"
+              answer="This lifetime launch offer goes away. Future campaigns should expect normal subscription pricing and enterprise-style packages."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-hero py-24">
+        <div className="mx-auto max-w-4xl px-5 text-center md:px-8">
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Limited launch window</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Lock in the best deal RunVoteWin will ever offer.
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-on-surface-variant">
+            Pay once, skip the subscription, and carry your data from race to race. Built for candidates who plan to keep winning.
+          </p>
+          <a
+            href={checkoutHref}
+            className="mt-9 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-4 font-display text-lg font-extrabold text-white shadow-xl transition hover:bg-primary-container"
+          >
+            Buy Now — $10,000
+            <ArrowRight size={20} />
+          </a>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function FeatureList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <article className="rounded-2xl border border-outline-variant bg-white p-7 shadow-xl">
+      <h2 className="font-display text-3xl font-extrabold text-primary">{title}</h2>
+      <div className="mt-6 grid gap-3">
+        {items.map((item) => (
+          <div key={item} className="flex gap-3 rounded-md bg-surface p-4">
+            <CheckCircle2 className="mt-0.5 shrink-0 text-accent" size={20} />
+            <p className="font-semibold leading-6 text-primary">{item}</p>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <article className="rounded-lg border border-white/15 bg-white/8 p-6">
+      <h3 className="font-display text-2xl font-extrabold text-white">{question}</h3>
+      <p className="mt-3 leading-7 text-on-primary-container">{answer}</p>
+    </article>
+  );
+}
+
 function Footer() {
   return (
     <footer className="bg-primary py-12 text-white">
@@ -903,21 +1128,27 @@ function Footer() {
 }
 
 export default function App() {
+  const isWinForLifePage = window.location.pathname === '/win-for-life';
+
   return (
     <div className="min-h-screen bg-surface">
       <Navbar />
-      <main>
-        <Hero />
-        <Platform />
-        <HumanProof />
-        <Pricing />
-        <Testimonials />
-        <Integrations />
-        <Comparison />
-        <Ownership />
-        <States />
-        <FinalCTA />
-      </main>
+      {isWinForLifePage ? (
+        <WinForLifePage />
+      ) : (
+        <main>
+          <Hero />
+          <Platform />
+          <HumanProof />
+          <Pricing />
+          <Testimonials />
+          <Integrations />
+          <Comparison />
+          <Ownership />
+          <States />
+          <FinalCTA />
+        </main>
+      )}
       <Footer />
     </div>
   );
