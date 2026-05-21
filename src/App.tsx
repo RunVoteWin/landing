@@ -39,36 +39,41 @@ type RoleOption = {
 
 const navItems = [
   { label: 'Platform', href: '#platform' },
+  { label: 'Proof', href: '#proof' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'Integrations', href: '#integrations' },
   { label: 'Compare', href: '#compare' },
-  { label: 'Docs', href: docsUrl },
 ];
+
+const organizingPhotoUrl =
+  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85';
+const protestPhotoUrl =
+  'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1200&q=85';
 
 const testimonialQuote =
   "After I ran for Congress, I realized how far behind Democratic campaigns were on knowing our voters. I needed RunVoteWin's modern Voter CRM and Canvassing Suite to spend our funding more effectively than any other campaign. It's ages ahead of any other product and is built by Americans.";
 
 const proofPoints = [
-  { value: '135%', label: 'more efficient turf cutting' },
-  { value: '30', label: 'combined political cycles' },
-  { value: 'TX + VA', label: 'supported today' },
+  { value: 'Fast', label: 'launches without legacy drag' },
+  { value: 'Reliable', label: 'built for election-day pressure' },
+  { value: 'Modern', label: 'better field ops than NGP VAN' },
 ];
 
 const platformFeatures = [
   {
     icon: MapPinned,
-    title: 'Intelligent turf cutting',
-    text: 'Cut walkable, balanced turfs with modern geospatial tools designed to help field teams cover more ground with less rework.',
+    title: 'Fast turf cutting',
+    text: 'Draw walkable, balanced turfs in minutes instead of losing a field day to clunky legacy workflows.',
   },
   {
     icon: Database,
-    title: 'Campaign-ready voter data',
-    text: 'Bring voter records, canvass results, tags, and universes into a workspace your team can understand without weeks of training.',
+    title: 'Reliable voter infrastructure',
+    text: 'Keep voter records, contact history, tags, universes, and imports in a clean system built for high-stakes campaigns.',
   },
   {
     icon: BarChart3,
-    title: 'Readable field reporting',
-    text: 'Give managers and candidates a clear view of contacts, turf progress, volunteer activity, and what needs attention next.',
+    title: 'Modern command center',
+    text: 'Give candidates, managers, and organizers live clarity on contacts, turf progress, volunteer output, and the next move.',
   },
 ];
 
@@ -259,7 +264,7 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
         disabled={status === 'loading'}
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {status === 'loading' ? 'Sending...' : 'Get campaign updates'}
+        {status === 'loading' ? 'Sending...' : 'Get a sales demo'}
         <ArrowRight size={20} />
       </button>
 
@@ -329,15 +334,15 @@ function Hero() {
         >
           <div className="mb-6 inline-flex max-w-full items-start gap-2 rounded-full border border-accent/25 bg-white/75 px-4 py-2 text-left text-sm font-bold leading-5 text-accent shadow-sm">
             <Flag className="mt-0.5 shrink-0" size={16} />
-            <span className="min-w-0">Built for Democratic campaigns competing to win</span>
+            <span className="min-w-0">Built for campaigns that play to win</span>
           </div>
 
           <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-primary md:text-7xl">
-            Modern voter contact software for serious Democratic campaigns.
+            The modern campaign machine built to beat NGP VAN.
           </h1>
 
           <p className="mt-7 max-w-2xl text-xl leading-8 text-on-surface-variant">
-            RunVoteWin brings voter data, intelligent turf cutting, canvassing, and reporting into one fast workspace for congressional, state, and local campaigns.
+            RunVoteWin is fast, reliable voter-contact infrastructure for teams that cannot afford slow software, broken exports, or stale field reports. Built for serious Democratic campaigns that want the best version — not legacy baggage.
           </p>
 
           <div className="mt-8">
@@ -355,7 +360,7 @@ function Hero() {
             <div className="flex items-center justify-between border-b border-outline-variant bg-surface-container-low px-4 py-3">
               <div className="flex items-center gap-2 text-sm font-bold text-primary">
                 <Map size={18} />
-                Turf Cutter
+                Field command
               </div>
               <div className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
                 Austin, TX
@@ -371,14 +376,14 @@ function Hero() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/10"></div>
                 <div className="absolute left-4 top-4 rounded-md border border-white/70 bg-white/92 px-4 py-3 shadow-lg backdrop-blur">
-                  <p className="text-xs font-bold uppercase text-on-surface-variant">Walkable turfs generated</p>
-                  <p className="font-display text-3xl font-extrabold text-primary">6 field loops</p>
+                  <p className="text-xs font-bold uppercase text-on-surface-variant">Campaign workspace online</p>
+                  <p className="font-display text-3xl font-extrabold text-primary">Ready today</p>
                 </div>
                 <div className="absolute bottom-4 right-4 max-w-48 rounded-md border border-white/70 bg-primary/92 p-4 text-white shadow-lg backdrop-blur">
-                  <p className="text-xs font-bold uppercase text-on-primary-container">Turf efficiency</p>
+                  <p className="text-xs font-bold uppercase text-on-primary-container">Legacy software beaten</p>
                   <p className="font-display text-4xl font-extrabold">135%</p>
                   <p className="mt-1 text-xs font-semibold leading-5 text-on-primary-container">
-                    More efficient turfs from modern geospatial cutting.
+                    Field tools that move as fast as the race does.
                   </p>
                 </div>
               </div>
@@ -404,12 +409,12 @@ function Platform() {
     <section id="platform" className="bg-surface py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="max-w-3xl">
-          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Built for modern field work</p>
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Fast. Reliable. Ruthlessly modern.</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-            Professional campaign infrastructure without the legacy drag.
+            A voter-contact machine for campaigns that do not play softball.
           </h2>
           <p className="mt-5 text-lg leading-8 text-on-surface-variant">
-            Created by a team with 30 combined political cycles, RunVoteWin is built for the pressure of real races: messy data, late nights, volunteer churn, and decisions that cannot wait.
+            RunVoteWin is the operating system for modern field teams: cleaner data, faster decisions, sharper turf, and reporting that keeps up when the race gets ugly. It is not an open-source science project. It is the best version of campaign software, built to win.
           </p>
         </div>
 
@@ -426,6 +431,58 @@ function Platform() {
               </article>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HumanProof() {
+  const moments = [
+    {
+      src: organizingPhotoUrl,
+      alt: 'Campaign organizers working together around a table',
+      eyebrow: 'For the staff room',
+      title: 'When the plan changes, the software keeps up.',
+      text: 'Field directors should be able to adjust universes, cut turf, and read the day without begging a consultant for another export.',
+    },
+    {
+      src: protestPhotoUrl,
+      alt: 'People gathered together at a civic protest',
+      eyebrow: 'For the ground game',
+      title: 'Built around people, pressure, and momentum.',
+      text: 'Campaigns are won by organizers, volunteers, candidates, and supporters moving together. RunVoteWin gives them infrastructure that does not flinch.',
+    },
+  ];
+
+  return (
+    <section id="proof" className="bg-primary py-24 text-white">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1fr] lg:items-end">
+          <div>
+            <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">Human field operations</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
+              Modern software for the people doing the brutal work of winning.
+            </h2>
+          </div>
+          <p className="text-lg leading-8 text-on-primary-container">
+            The best campaigns do not need more tabs, more mystery exports, or another brittle legacy workflow. They need a fast command center that lets humans organize harder and move faster.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-5 lg:grid-cols-2">
+          {moments.map((moment) => (
+            <article key={moment.title} className="group relative min-h-[430px] overflow-hidden rounded-2xl border border-white/15 bg-white/8 shadow-2xl">
+              <img src={moment.src} alt={moment.alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-primary/70 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/12" />
+              <div className="relative flex h-full min-h-[430px] flex-col justify-end p-7 md:p-9">
+                <p className="mb-3 text-sm font-extrabold uppercase tracking-wide text-secondary-container">{moment.eyebrow}</p>
+                <h3 className="font-display text-3xl font-extrabold leading-tight md:text-4xl">{moment.title}</h3>
+                <p className="mt-4 max-w-xl text-base font-semibold leading-7 text-on-primary-container">{moment.text}</p>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -657,11 +714,11 @@ function Integrations() {
           <div>
             <p className="mb-4 text-sm font-extrabold uppercase text-accent">Integrations</p>
             <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-              RunVoteWin plays well with others.
+              Plug in your data. Move faster immediately.
             </h2>
           </div>
           <p className="text-lg leading-8 text-on-surface-variant">
-            Campaigns already have data scattered across tools. RunVoteWin helps consolidate the sources your team actually uses so field planning moves faster.
+            Campaigns inherit messy spreadsheets, VAN exports, donor files, volunteer lists, and last-minute targeting changes. RunVoteWin turns that mess into usable field infrastructure without slowing the team down.
           </p>
         </div>
 
@@ -691,7 +748,7 @@ function Comparison() {
         <div className="mb-12 max-w-3xl">
           <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">RunVoteWin vs. NGP VAN</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
-            A modern alternative for campaigns that need speed, clarity, and continuity.
+            A brutally better alternative for campaigns that need speed, reliability, and control.
           </h2>
         </div>
 
@@ -735,16 +792,16 @@ function Ownership() {
             Made in America, by Americans, and owned 100% by Americans.
           </h2>
           <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-            RunVoteWin is built by people who understand that campaign software is not just another SaaS category. The product exists to help Democratic campaigns make progress and win elections.
+            RunVoteWin is built by people who understand that campaign software is operational infrastructure. When the field plan changes at 10 p.m., the system has to work. When volunteers arrive, the turfs have to be ready. When the candidate asks what happened today, the answer has to be obvious.
           </p>
         </div>
 
         <div className="grid gap-4">
           {[
-            'Built only for Democratic Party campaigns',
-            'Created by a team with 30 combined political cycles',
-            'Users help decide which features get built next',
-            'Designed to preserve access and data continuity beyond one cycle',
+            'Built for Democratic campaigns that need to move now',
+            'Designed by people with 30 combined political cycles',
+            'Fast onboarding without legacy access bottlenecks',
+            'Reliable data continuity beyond one chaotic cycle',
           ].map((value) => (
             <div key={value} className="flex gap-4 rounded-lg border border-outline-variant bg-surface p-5 shadow-sm">
               <CheckCircle2 className="mt-1 shrink-0 text-accent" size={22} />
@@ -796,10 +853,10 @@ function FinalCTA() {
         <div>
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Ready when your campaign is</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-            Build a field program your staff and volunteers can actually use.
+            Build the field operation your opponent wishes you did not have.
           </h2>
           <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-            Get updates on state expansion, product releases, and campaign onboarding.
+            Get a serious look at the voter-contact platform built for speed, reliability, and wins.
           </p>
         </div>
 
@@ -828,7 +885,7 @@ function Footer() {
           </span>
           <div>
             <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
-            <p className="text-sm text-on-primary-container">Modern voter contact software for Democratic campaigns.</p>
+            <p className="text-sm text-on-primary-container">Fast, reliable voter-contact software for winning Democratic campaigns.</p>
           </div>
         </div>
 
@@ -852,6 +909,7 @@ export default function App() {
       <main>
         <Hero />
         <Platform />
+        <HumanProof />
         <Pricing />
         <Testimonials />
         <Integrations />
