@@ -5,17 +5,13 @@ import {
   BarChart3,
   CheckCircle2,
   Database,
-  FileSpreadsheet,
   Flag,
-  HeartHandshake,
   Mail,
   Map,
   MapPinned,
-  RadioTower,
   ShieldCheck,
   SlidersHorizontal,
   User,
-  Users,
   Vote,
 } from 'lucide-react';
 
@@ -34,6 +30,14 @@ type PricingOption = {
 type RoleOption = {
   id: string;
   label: string;
+};
+
+type Integration = {
+  name: string;
+  logoSrc: string;
+  logoAlt: string;
+  logoClassName?: string;
+  text: string;
 };
 
 const navItems = [
@@ -100,30 +104,40 @@ const roleOptions: RoleOption[] = [
   { id: 'staff', label: 'Campaign staff' },
 ];
 
-const integrations = [
+const integrations: Integration[] = [
   {
-    icon: Database,
     name: 'NGP VAN',
+    logoSrc: 'logos/ngpvan.svg',
+    logoAlt: 'NGP VAN logo',
+    logoClassName: 'max-h-9 max-w-36',
     text: 'Import voter-file exports, canvass targets, IDs, tags, and contact history into RunVoteWin workflows.',
   },
   {
-    icon: Users,
     name: 'Mobilize',
+    logoSrc: 'logos/mobilize.png',
+    logoAlt: 'Mobilize logo',
+    logoClassName: 'max-h-10 max-w-36',
     text: 'Coordinate volunteer lists and event participation data with the rest of your field operation.',
   },
   {
-    icon: FileSpreadsheet,
     name: 'Excel',
+    logoSrc: 'logos/excel.svg',
+    logoAlt: 'Microsoft Excel logo',
+    logoClassName: 'max-h-12 max-w-12',
     text: 'Upload spreadsheets, normalize columns, and turn messy campaign lists into usable universes.',
   },
   {
-    icon: RadioTower,
-    name: 'ISP',
-    text: 'Bring ISP data into the campaign workspace so targeting and reporting stay connected.',
+    name: 'ISPolitical',
+    logoSrc: 'logos/ispolitical.webp',
+    logoAlt: 'ISPolitical logo',
+    logoClassName: 'max-h-10 max-w-40',
+    text: 'Bring ISPolitical data into the campaign workspace so targeting and reporting stay connected.',
   },
   {
-    icon: HeartHandshake,
     name: 'ActBlue',
+    logoSrc: 'logos/actblue.svg',
+    logoAlt: 'ActBlue logo',
+    logoClassName: 'max-h-9 max-w-36',
     text: 'Use supporter and fundraising exports to inform organizing, follow-up, and constituency work.',
   },
 ];
@@ -629,18 +643,21 @@ function Integrations() {
         </div>
 
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
-          {integrations.map((item) => {
-            const Icon = item.icon;
-            return (
-              <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-md bg-primary text-white">
-                  <Icon size={22} />
-                </div>
-                <h3 className="font-display text-2xl font-extrabold text-primary">{item.name}</h3>
-                <p className="mt-3 text-sm leading-6 text-on-surface-variant">{item.text}</p>
-              </article>
-            );
-          })}
+          {integrations.map((item) => (
+            <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
+              <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface-container-low px-4">
+                <img
+                  src={`${import.meta.env.BASE_URL}${item.logoSrc}`}
+                  alt={item.logoAlt}
+                  loading="lazy"
+                  decoding="async"
+                  className={`h-auto w-auto object-contain ${item.logoClassName ?? 'max-h-10 max-w-36'}`}
+                />
+              </div>
+              <h3 className="font-display text-2xl font-extrabold text-primary">{item.name}</h3>
+              <p className="mt-3 text-sm leading-6 text-on-surface-variant">{item.text}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>
