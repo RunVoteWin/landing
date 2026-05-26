@@ -16,7 +16,6 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   User,
-  Users,
   Vote,
 } from 'lucide-react';
 
@@ -37,6 +36,14 @@ type PricingOption = {
 type RoleOption = {
   id: string;
   label: string;
+};
+
+type Integration = {
+  name: string;
+  logoSrc: string;
+  logoAlt: string;
+  logoClassName?: string;
+  text: string;
 };
 
 const navItems = [
@@ -114,30 +121,40 @@ const roleOptions: RoleOption[] = [
   { id: 'staff', label: 'Campaign staff' },
 ];
 
-const integrations = [
+const integrations: Integration[] = [
   {
     name: 'NGP VAN',
-    logo: { type: 'image', src: 'ngpvan-logo.svg', alt: 'NGP VAN logo' },
+    logoSrc: 'logos/ngpvan.svg',
+    logoAlt: 'NGP VAN logo',
+    logoClassName: 'max-h-9 max-w-36',
     text: 'Import voter-file exports, canvass targets, IDs, tags, and contact history into RunVoteWin workflows.',
   },
   {
     name: 'Mobilize',
-    logo: { type: 'wordmark', text: 'Mobilize', className: 'text-[#174ea6]' },
+    logoSrc: 'logos/mobilize.png',
+    logoAlt: 'Mobilize logo',
+    logoClassName: 'max-h-10 max-w-36',
     text: 'Coordinate volunteer lists and event participation data with the rest of your field operation.',
   },
   {
     name: 'Microsoft Excel',
-    logo: { type: 'wordmark', text: 'Excel', className: 'text-[#217346]' },
+    logoSrc: 'logos/excel.svg',
+    logoAlt: 'Microsoft Excel logo',
+    logoClassName: 'max-h-12 max-w-12',
     text: 'Upload spreadsheets, normalize columns, and turn messy campaign lists into usable universes.',
   },
   {
-    name: 'ISP',
-    logo: { type: 'wordmark', text: 'ISP', className: 'text-primary' },
-    text: 'Bring ISP data into the campaign workspace so targeting and reporting stay connected.',
+    name: 'ISPolitical',
+    logoSrc: 'logos/ispolitical.webp',
+    logoAlt: 'ISPolitical logo',
+    logoClassName: 'max-h-10 max-w-40',
+    text: 'Bring ISPolitical data into the campaign workspace so targeting and reporting stay connected.',
   },
   {
     name: 'ActBlue',
-    logo: { type: 'wordmark', text: 'ActBlue', className: 'text-[#0075c9]' },
+    logoSrc: 'logos/actblue.svg',
+    logoAlt: 'ActBlue logo',
+    logoClassName: 'max-h-9 max-w-36',
     text: 'Use supporter and fundraising exports to inform organizing, follow-up, and constituency work.',
   },
 ];
@@ -793,14 +810,6 @@ function Testimonials() {
   );
 }
 
-function IntegrationLogo({ item }: { item: (typeof integrations)[number] }) {
-  if (item.logo.type === 'image') {
-    return <img src={item.logo.src} alt={item.logo.alt} className="max-h-8 max-w-32 object-contain" />;
-  }
-
-  return <span className={`font-display text-2xl font-extrabold tracking-tight ${item.logo.className}`}>{item.logo.text}</span>;
-}
-
 function Integrations() {
   return (
     <section id="integrations" className="bg-surface-container-low py-24">
@@ -820,8 +829,14 @@ function Integrations() {
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
           {integrations.map((item) => (
             <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
-              <div className="mb-5 flex h-14 items-center rounded-md border border-outline-variant bg-surface px-4">
-                <IntegrationLogo item={item} />
+              <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface px-4">
+                <img
+                  src={`${import.meta.env.BASE_URL}${item.logoSrc}`}
+                  alt={item.logoAlt}
+                  loading="lazy"
+                  decoding="async"
+                  className={`h-auto w-auto object-contain ${item.logoClassName ?? 'max-h-10 max-w-36'}`}
+                />
               </div>
               <h3 className="font-display text-2xl font-extrabold text-primary">{item.name}</h3>
               <p className="mt-3 text-sm leading-6 text-on-surface-variant">{item.text}</p>
