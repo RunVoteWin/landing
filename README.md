@@ -53,6 +53,12 @@ The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google 
 
 Until that endpoint is configured, the forms render normally but display a connection-needed message on submit.
 
+## Win for Life Stripe Checkout
+
+The `/win-for-life` page reads `VITE_WIN_FOR_LIFE_CHECKOUT_URL` at build time. Set it to the Stripe Payment Link or Checkout URL for the $10,000 Founding Victory Pass.
+
+If the variable is missing, the page falls back to a `mailto:` sales link and shows a small setup note.
+
 ### Google Apps Script setup
 
 1. Open the Google Sheet for leads.

@@ -35,6 +35,7 @@ jobs:
         run: npm run build
         env:
           VITE_SIGNUP_ENDPOINT: ${{ secrets.VITE_SIGNUP_ENDPOINT }}
+          VITE_WIN_FOR_LIFE_CHECKOUT_URL: ${{ secrets.VITE_WIN_FOR_LIFE_CHECKOUT_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -2,13 +2,17 @@ import { FormEvent, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowRight,
+  Award,
   BarChart3,
   CheckCircle2,
   Database,
   Flag,
+  Infinity,
+  LifeBuoy,
   Mail,
   Map,
   MapPinned,
+  Rocket,
   ShieldCheck,
   SlidersHorizontal,
   User,
@@ -16,7 +20,9 @@ import {
 } from 'lucide-react';
 
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
+const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? '';
 const appUrl = 'https://app.runvotewin.com';
+const docsUrl = 'https://docs.runvotewin.com';
 
 type SignupFormVariant = 'hero' | 'compact';
 
@@ -41,33 +47,44 @@ type Integration = {
 };
 
 const navItems = [
-  { label: 'Platform', href: '#platform' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Integrations', href: '#integrations' },
-  { label: 'Compare', href: '#compare' },
+  { label: 'Platform', href: '/#platform' },
+  { label: 'Proof', href: '/#proof' },
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'Integrations', href: '/#integrations' },
+  { label: 'Compare', href: '/#compare' },
 ];
 
+const organizingPhotoUrl =
+  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85';
+const protestPhotoUrl =
+  'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1200&q=85';
+const placeholderCandidatePhotoUrl =
+  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=85';
+
+const testimonialQuote =
+  "After I ran for Congress, I realized how far behind Democratic campaigns were on knowing our voters. I needed RunVoteWin's modern Voter CRM and Canvassing Suite to spend our funding more effectively than any other campaign. It's ages ahead of any other product and is built by Americans.";
+
 const proofPoints = [
-  { value: '135%', label: 'more efficient turf cutting' },
-  { value: '30', label: 'combined political cycles' },
-  { value: 'TX + VA', label: 'supported today' },
+  { value: 'Fast', label: 'launches without legacy drag' },
+  { value: 'Reliable', label: 'built for election-day pressure' },
+  { value: 'Modern', label: 'better field ops than NGP VAN' },
 ];
 
 const platformFeatures = [
   {
     icon: MapPinned,
-    title: 'Intelligent turf cutting',
-    text: 'Cut walkable, balanced turfs with modern geospatial tools designed to help field teams cover more ground with less rework.',
+    title: 'Fast turf cutting',
+    text: 'Draw walkable, balanced turfs in minutes instead of losing a field day to clunky legacy workflows.',
   },
   {
     icon: Database,
-    title: 'Campaign-ready voter data',
-    text: 'Bring voter records, canvass results, tags, and universes into a workspace your team can understand without weeks of training.',
+    title: 'Reliable voter infrastructure',
+    text: 'Keep voter records, contact history, tags, universes, and imports in a clean system built for high-stakes campaigns.',
   },
   {
     icon: BarChart3,
-    title: 'Readable field reporting',
-    text: 'Give managers and candidates a clear view of contacts, turf progress, volunteer activity, and what needs attention next.',
+    title: 'Modern command center',
+    text: 'Give candidates, managers, and organizers live clarity on contacts, turf progress, volunteer output, and the next move.',
   },
 ];
 
@@ -120,7 +137,7 @@ const integrations: Integration[] = [
     text: 'Coordinate volunteer lists and event participation data with the rest of your field operation.',
   },
   {
-    name: 'Excel',
+    name: 'Microsoft Excel',
     logoSrc: 'logos/excel.svg',
     logoAlt: 'Microsoft Excel logo',
     logoClassName: 'max-h-12 max-w-12',
@@ -176,6 +193,33 @@ const comparisonRows = [
 ];
 
 const states = ['Texas', 'Virginia'];
+
+const lifetimeBenefits = [
+  'One candidate seat covered for every future campaign',
+  'All RunVoteWin features available today',
+  'All future product features included as they ship',
+  'Keep your campaign data at the end of each cycle',
+  'Premium launch-partner support and onboarding',
+  'Feature requests reviewed directly by the product team',
+];
+
+const currentFeatures = [
+  'Voter CRM and campaign workspace',
+  'Fast turf cutting and walk-list planning',
+  'Canvassing workflows and contact history',
+  'Imports from spreadsheets, VAN exports, and supporter lists',
+  'Readable field reporting for managers and candidates',
+  'Data continuity across supported campaign cycles',
+];
+
+const plannedFeatures = [
+  'Google login and account workspaces',
+  'Role-based permissions for candidates, managers, staff, and volunteers',
+  'Scalable Supabase-backed API for fast feature development',
+  'React Native contact-import app for iOS and Android',
+  'Deeper reporting, targeting, and voter-universe tools',
+  'More integrations and more supported states',
+];
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat('en-US', {
@@ -268,7 +312,7 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
         disabled={status === 'loading'}
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {status === 'loading' ? 'Sending...' : 'Get campaign updates'}
+        {status === 'loading' ? 'Sending...' : 'Get a sales demo'}
         <ArrowRight size={20} />
       </button>
 
@@ -291,11 +335,24 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
   );
 }
 
+function LifetimeBanner() {
+  return (
+    <a
+      href="/win-for-life"
+      className="block bg-secondary-container px-4 py-2 text-center text-xs font-extrabold leading-5 text-primary transition hover:bg-white sm:text-sm"
+    >
+      For a limited time, before July 2026, buy a lifetime license — no subscription needed. Keep your data between all campaigns forever.{' '}
+      <span className="underline underline-offset-2">Learn more →</span>
+    </a>
+  );
+}
+
 function Navbar() {
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface/88 backdrop-blur-xl">
+      <LifetimeBanner />
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-4 md:px-8">
-        <a href="#" className="flex min-w-0 items-center gap-3 text-primary">
+        <a href="/" className="flex min-w-0 items-center gap-3 text-primary">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-white shadow-sm">
             <Vote size={22} />
           </span>
@@ -338,15 +395,15 @@ function Hero() {
         >
           <div className="mb-6 inline-flex max-w-full items-start gap-2 rounded-full border border-accent/25 bg-white/75 px-4 py-2 text-left text-sm font-bold leading-5 text-accent shadow-sm">
             <Flag className="mt-0.5 shrink-0" size={16} />
-            <span className="min-w-0">Built for Democratic campaigns competing to win</span>
+            <span className="min-w-0">Built for campaigns that play to win</span>
           </div>
 
           <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-primary md:text-7xl">
-            Modern voter contact software for serious Democratic campaigns.
+            The modern campaign machine built to beat NGP VAN.
           </h1>
 
           <p className="mt-7 max-w-2xl text-xl leading-8 text-on-surface-variant">
-            RunVoteWin brings voter data, intelligent turf cutting, canvassing, and reporting into one fast workspace for congressional, state, and local campaigns.
+            RunVoteWin is fast, reliable voter-contact infrastructure for teams that cannot afford slow software, broken exports, or stale field reports. Built for serious Democratic campaigns that want the best version — not legacy baggage.
           </p>
 
           <div className="mt-8">
@@ -364,7 +421,7 @@ function Hero() {
             <div className="flex items-center justify-between border-b border-outline-variant bg-surface-container-low px-4 py-3">
               <div className="flex items-center gap-2 text-sm font-bold text-primary">
                 <Map size={18} />
-                Turf Cutter
+                Field command
               </div>
               <div className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
                 Austin, TX
@@ -380,14 +437,14 @@ function Hero() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/10"></div>
                 <div className="absolute left-4 top-4 rounded-md border border-white/70 bg-white/92 px-4 py-3 shadow-lg backdrop-blur">
-                  <p className="text-xs font-bold uppercase text-on-surface-variant">Walkable turfs generated</p>
-                  <p className="font-display text-3xl font-extrabold text-primary">6 field loops</p>
+                  <p className="text-xs font-bold uppercase text-on-surface-variant">Campaign workspace online</p>
+                  <p className="font-display text-3xl font-extrabold text-primary">Ready today</p>
                 </div>
                 <div className="absolute bottom-4 right-4 max-w-48 rounded-md border border-white/70 bg-primary/92 p-4 text-white shadow-lg backdrop-blur">
-                  <p className="text-xs font-bold uppercase text-on-primary-container">Turf efficiency</p>
+                  <p className="text-xs font-bold uppercase text-on-primary-container">Legacy software beaten</p>
                   <p className="font-display text-4xl font-extrabold">135%</p>
                   <p className="mt-1 text-xs font-semibold leading-5 text-on-primary-container">
-                    More efficient turfs from modern geospatial cutting.
+                    Field tools that move as fast as the race does.
                   </p>
                 </div>
               </div>
@@ -413,12 +470,12 @@ function Platform() {
     <section id="platform" className="bg-surface py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="max-w-3xl">
-          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Built for modern field work</p>
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Fast. Reliable. Ruthlessly modern.</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-            Professional campaign infrastructure without the legacy drag.
+            A voter-contact machine for campaigns that do not play softball.
           </h2>
           <p className="mt-5 text-lg leading-8 text-on-surface-variant">
-            Created by a team with 30 combined political cycles, RunVoteWin is built for the pressure of real races: messy data, late nights, volunteer churn, and decisions that cannot wait.
+            RunVoteWin is the operating system for modern field teams: cleaner data, faster decisions, sharper turf, and reporting that keeps up when the race gets ugly. It is not an open-source science project. It is the best version of campaign software, built to win.
           </p>
         </div>
 
@@ -441,19 +498,79 @@ function Platform() {
   );
 }
 
+function HumanProof() {
+  const moments = [
+    {
+      src: organizingPhotoUrl,
+      alt: 'Campaign organizers working together around a table',
+      eyebrow: 'For the staff room',
+      title: 'When the plan changes, the software keeps up.',
+      text: 'Field directors should be able to adjust universes, cut turf, and read the day without begging a consultant for another export.',
+    },
+    {
+      src: protestPhotoUrl,
+      alt: 'People gathered together at a civic protest',
+      eyebrow: 'For the ground game',
+      title: 'Built around people, pressure, and momentum.',
+      text: 'Campaigns are won by organizers, volunteers, candidates, and supporters moving together. RunVoteWin gives them infrastructure that does not flinch.',
+    },
+  ];
+
+  return (
+    <section id="proof" className="bg-primary py-24 text-white">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1fr] lg:items-end">
+          <div>
+            <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">Human field operations</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
+              Modern software for the people doing the brutal work of winning.
+            </h2>
+          </div>
+          <p className="text-lg leading-8 text-on-primary-container">
+            The best campaigns do not need more tabs, more mystery exports, or another brittle legacy workflow. They need a fast command center that lets humans organize harder and move faster.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-5 lg:grid-cols-2">
+          {moments.map((moment) => (
+            <article key={moment.title} className="group relative min-h-[430px] overflow-hidden rounded-2xl border border-white/15 bg-white/8 shadow-2xl">
+              <img src={moment.src} alt={moment.alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-primary/70 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/12" />
+              <div className="relative flex h-full min-h-[430px] flex-col justify-end p-7 md:p-9">
+                <p className="mb-3 text-sm font-extrabold uppercase tracking-wide text-secondary-container">{moment.eyebrow}</p>
+                <h3 className="font-display text-3xl font-extrabold leading-tight md:text-4xl">{moment.title}</h3>
+                <p className="mt-4 max-w-xl text-base font-semibold leading-7 text-on-primary-container">{moment.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Pricing() {
-  const [campaignId, setCampaignId] = useState('congressional');
-  const [role, setRole] = useState('candidate');
+  const [campaignId, setCampaignId] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
 
-  const selectedCampaign = campaignOptions.find((option) => option.id === campaignId) ?? campaignOptions[2];
+  const selectedCampaign = useMemo(
+    () => campaignOptions.find((option) => option.id === campaignId) ?? null,
+    [campaignId],
+  );
 
-  const monthlyTotal = useMemo(() => selectedCampaign.price, [selectedCampaign.price]);
+  const monthlyTotal = selectedCampaign?.price ?? null;
+  const canShowEstimate = Boolean(selectedCampaign && role);
 
   async function handlePricingSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!selectedCampaign || !role || monthlyTotal === null) {
+      return;
+    }
 
     if (!signupEndpoint) {
       setStatus('needs-endpoint');
@@ -507,7 +624,7 @@ function Pricing() {
             </div>
 
             <div>
-              <p className="mb-3 text-sm font-extrabold uppercase text-primary">Campaign size</p>
+              <p className="mb-3 text-sm font-extrabold uppercase text-primary">Step 1 · Campaign size</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {campaignOptions.map((option) => (
                   <button
@@ -522,7 +639,7 @@ function Pricing() {
                   >
                     <span className="flex items-center justify-between gap-3">
                       <span className="font-display text-xl font-extrabold text-primary">{option.label}</span>
-                      <span className="text-sm font-bold text-accent">{formatPrice(option.price)}/mo</span>
+                      <span className="text-sm font-bold text-accent">Choose</span>
                     </span>
                     <span className="mt-2 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
                   </button>
@@ -558,7 +675,7 @@ function Pricing() {
               </div>
 
               <div>
-                <p className="mb-2 text-sm font-bold text-primary">Your role</p>
+                <p className="mb-2 text-sm font-extrabold uppercase text-primary">Step 2 · Your role</p>
                 <div className="grid gap-2">
                   {roleOptions.map((option) => (
                     <label
@@ -585,24 +702,35 @@ function Pricing() {
             </div>
 
             <div className="mt-7 rounded-lg bg-primary p-6 text-white">
-              <p className="text-sm font-bold uppercase text-secondary-container">Estimated platform price</p>
-              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
-                  <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
+              <p className="text-sm font-bold uppercase text-secondary-container">Step 3 · Estimate</p>
+              {canShowEstimate && monthlyTotal !== null ? (
+                <>
+                  <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
+                      <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={status === 'loading'}
+                      className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
+                      <ArrowRight size={18} />
+                    </button>
+                  </div>
+                  <p className="mt-5 text-sm leading-6 text-on-primary-container">
+                    Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
+                  </p>
+                </>
+              ) : (
+                <div className="mt-3 rounded-md border border-white/15 bg-white/10 p-5">
+                  <p className="font-display text-2xl font-extrabold">Answer the two questions above to reveal pricing.</p>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-on-primary-container">
+                    We hide the number until the campaign size and role are selected so the estimator feels like a quick guided flow, not a static rate card.
+                  </p>
                 </div>
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
-                  <ArrowRight size={18} />
-                </button>
-              </div>
-              <p className="mt-5 text-sm leading-6 text-on-primary-container">
-                Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
-              </p>
+              )}
               {status === 'needs-endpoint' && (
                 <p className="mt-4 rounded-md bg-white/10 p-3 text-sm font-semibold leading-6 text-white">
                   Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
@@ -626,6 +754,62 @@ function Pricing() {
   );
 }
 
+function Testimonials() {
+  const testimonials = [
+    {
+      quote: testimonialQuote,
+      name: 'Joe Schiarizzi',
+      role: 'U.S. Congressional candidate, VA-07',
+      image: 'joe-schiarizzi-headshot.jpg',
+      alt: "Joe Schiarizzi, U.S. Congressional candidate for Virginia's 7th District",
+    },
+    {
+      quote:
+        'Placeholder launch-partner quote: RunVoteWin gives our team the speed and data continuity we need to organize aggressively without fighting legacy software.',
+      name: 'Launch Partner',
+      role: 'Campaign director testimonial placeholder',
+      image: placeholderCandidatePhotoUrl,
+      alt: 'Placeholder portrait of a campaign leader',
+    },
+  ];
+
+  return (
+    <section className="bg-white py-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="mb-10 max-w-3xl">
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Trusted by candidates and operators</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Built for the people who have to win the race.
+          </h2>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          {testimonials.map((testimonial) => (
+            <article key={testimonial.name} className="rounded-2xl border border-outline-variant bg-surface p-8 shadow-xl md:p-10">
+              <blockquote className="font-display text-2xl font-extrabold leading-tight text-primary md:text-3xl">
+                “{testimonial.quote}”
+              </blockquote>
+              <div className="mt-8 flex items-center gap-4 border-t border-outline-variant pt-6">
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.alt}
+                  className="h-16 w-16 shrink-0 rounded-full border-4 border-white object-cover object-center shadow-lg"
+                />
+                <div>
+                  <p className="font-display text-2xl font-extrabold text-primary">{testimonial.name}</p>
+                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-on-surface-variant">
+                    {testimonial.role}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Integrations() {
   return (
     <section id="integrations" className="bg-surface-container-low py-24">
@@ -634,18 +818,18 @@ function Integrations() {
           <div>
             <p className="mb-4 text-sm font-extrabold uppercase text-accent">Integrations</p>
             <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-              RunVoteWin plays well with others.
+              Plug in your data. Move faster immediately.
             </h2>
           </div>
           <p className="text-lg leading-8 text-on-surface-variant">
-            Campaigns already have data scattered across tools. RunVoteWin helps consolidate the sources your team actually uses so field planning moves faster.
+            Campaigns inherit messy spreadsheets, VAN exports, donor files, volunteer lists, and last-minute targeting changes. RunVoteWin turns that mess into usable field infrastructure without slowing the team down.
           </p>
         </div>
 
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
           {integrations.map((item) => (
             <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
-              <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface-container-low px-4">
+              <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface px-4">
                 <img
                   src={`${import.meta.env.BASE_URL}${item.logoSrc}`}
                   alt={item.logoAlt}
@@ -671,7 +855,7 @@ function Comparison() {
         <div className="mb-12 max-w-3xl">
           <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">RunVoteWin vs. NGP VAN</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
-            A modern alternative for campaigns that need speed, clarity, and continuity.
+            A brutally better alternative for campaigns that need speed, reliability, and control.
           </h2>
         </div>
 
@@ -715,16 +899,16 @@ function Ownership() {
             Made in America, by Americans, and owned 100% by Americans.
           </h2>
           <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-            RunVoteWin is built by people who understand that campaign software is not just another SaaS category. The product exists to help Democratic campaigns make progress and win elections.
+            RunVoteWin is built by people who understand that campaign software is operational infrastructure. When the field plan changes at 10 p.m., the system has to work. When volunteers arrive, the turfs have to be ready. When the candidate asks what happened today, the answer has to be obvious.
           </p>
         </div>
 
         <div className="grid gap-4">
           {[
-            'Built only for Democratic Party campaigns',
-            'Created by a team with 30 combined political cycles',
-            'Users help decide which features get built next',
-            'Designed to preserve access and data continuity beyond one cycle',
+            'Built for Democratic campaigns that need to move now',
+            'Designed by people with 30 combined political cycles',
+            'Fast onboarding without legacy access bottlenecks',
+            'Reliable data continuity beyond one chaotic cycle',
           ].map((value) => (
             <div key={value} className="flex gap-4 rounded-lg border border-outline-variant bg-surface p-5 shadow-sm">
               <CheckCircle2 className="mt-1 shrink-0 text-accent" size={22} />
@@ -776,10 +960,10 @@ function FinalCTA() {
         <div>
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Ready when your campaign is</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-            Build a field program your staff and volunteers can actually use.
+            Build the field operation your opponent wishes you did not have.
           </h2>
           <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-            Get updates on state expansion, product releases, and campaign onboarding.
+            Get a serious look at the voter-contact platform built for speed, reliability, and wins.
           </p>
         </div>
 
@@ -798,6 +982,186 @@ function FinalCTA() {
   );
 }
 
+function WinForLifePage() {
+  const checkoutHref =
+    lifetimeCheckoutUrl ||
+    'mailto:sales@runvotewin.com?subject=RunVoteWin%20Founding%20Victory%20Pass&body=I%20want%20to%20buy%20a%20Founding%20Victory%20Pass.';
+
+  return (
+    <main>
+      <section className="relative overflow-hidden bg-primary pt-36 text-white md:pt-40">
+        <div className="absolute inset-0 opacity-35">
+          <img src={organizingPhotoUrl} alt="Campaign organizers working together" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-primary/75 mix-blend-multiply" />
+        </div>
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-5 pb-20 md:px-8 lg:grid-cols-[1fr_0.78fr] lg:items-center lg:pb-24">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary-container/40 bg-white/10 px-4 py-2 text-sm font-extrabold text-secondary-container backdrop-blur">
+              <Award size={17} />
+              Founding Victory Pass · Available before July 2026
+            </div>
+            <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight md:text-7xl">
+              Buy RunVoteWin once. Keep your campaign data forever.
+            </h1>
+            <p className="mt-7 max-w-2xl text-xl font-semibold leading-8 text-on-primary-container">
+              Early launch partners can lock in lifetime access for one candidate: premium support, direct feature requests, every feature we build, and data continuity from campaign to campaign.
+            </p>
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+              <a
+                href={checkoutHref}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-secondary-container px-7 py-4 font-display text-lg font-extrabold text-primary shadow-xl transition hover:bg-white"
+              >
+                Buy Now — $10,000
+                <ArrowRight size={20} />
+              </a>
+              <a
+                href="/"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-white/25 bg-white/10 px-7 py-4 font-display text-lg font-extrabold text-white backdrop-blur transition hover:bg-white/18"
+              >
+                Back to platform
+              </a>
+            </div>
+            {!lifetimeCheckoutUrl && (
+              <p className="mt-4 max-w-xl rounded-md border border-white/20 bg-white/10 p-3 text-sm font-semibold text-on-primary-container backdrop-blur">
+                Stripe checkout is ready to connect. Add VITE_WIN_FOR_LIFE_CHECKOUT_URL to point this button at the live Stripe payment link.
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-white/18 bg-white/12 p-6 shadow-2xl backdrop-blur-xl">
+            <p className="text-sm font-extrabold uppercase text-secondary-container">Lifetime launch price</p>
+            <p className="mt-3 font-display text-6xl font-extrabold">$10,000</p>
+            <p className="mt-3 text-lg font-semibold leading-7 text-on-primary-container">
+              No subscription for the covered candidate. No losing your workspace after the cycle. No paying legacy rent forever.
+            </p>
+            <div className="mt-7 grid gap-3">
+              {lifetimeBenefits.map((benefit) => (
+                <div key={benefit} className="flex gap-3 rounded-md bg-white/10 p-3">
+                  <CheckCircle2 className="mt-0.5 shrink-0 text-secondary-container" size={20} />
+                  <p className="font-semibold leading-6">{benefit}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-24">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.75fr_1fr] lg:items-start">
+            <div>
+              <p className="mb-4 text-sm font-extrabold uppercase text-accent">Why join early</p>
+              <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+                Become a Founding Victory Partner.
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-on-surface-variant">
+                “Premiere Launch Partner User” is the idea. The sharper name is <strong>Founding Victory Partner</strong>: campaigns that help bootstrap RunVoteWin now and get permanent access before everyone else is paying monthly.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { icon: Infinity, title: 'Lifetime access', text: 'One candidate can use RunVoteWin for future campaigns without a subscription.' },
+                { icon: LifeBuoy, title: 'Premium support', text: 'Launch-partner support for setup, onboarding, imports, and serious campaign questions.' },
+                { icon: Rocket, title: 'Feature influence', text: 'Request features and help shape the platform while we are still moving fast.' },
+                { icon: Database, title: 'Data continuity', text: 'Keep your campaign data after the current cycle and carry institutional memory forward.' },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <article key={item.title} className="rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-md bg-primary text-white">
+                      <Icon size={24} />
+                    </div>
+                    <h3 className="font-display text-2xl font-extrabold text-primary">{item.title}</h3>
+                    <p className="mt-3 leading-7 text-on-surface-variant">{item.text}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-surface-container-low py-24">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 md:px-8 lg:grid-cols-2">
+          <FeatureList title="What features are there now?" items={currentFeatures} />
+          <FeatureList title="What features are planned?" items={plannedFeatures} />
+        </div>
+      </section>
+
+      <section className="bg-primary py-20 text-white">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="max-w-3xl">
+            <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">FAQ</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">Straight answers before you buy.</h2>
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            <FAQItem
+              question="How can we afford to do this?"
+              answer="The Founding Victory Pass helps bootstrap the growth we have planned. Data storage costs have fallen by more than 90% over the last decade. Campaigns are just used to being overcharged by legacy vendors."
+            />
+            <FAQItem
+              question="What does the license cover?"
+              answer="The license covers all current RunVoteWin features, all future RunVoteWin features, premium launch-partner support, and data continuity for one candidate across future campaigns."
+            />
+            <FAQItem
+              question="Is this for a campaign, a committee, or a candidate?"
+              answer="This offer is scoped to one candidate. The candidate can keep access to their RunVoteWin campaign data across future races instead of starting over every cycle."
+            />
+            <FAQItem
+              question="What happens after July 2026?"
+              answer="This lifetime launch offer goes away. Future campaigns should expect normal subscription pricing and enterprise-style packages."
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-hero py-24">
+        <div className="mx-auto max-w-4xl px-5 text-center md:px-8">
+          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Limited launch window</p>
+          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+            Lock in the best deal RunVoteWin will ever offer.
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-on-surface-variant">
+            Pay once, skip the subscription, and carry your data from race to race. Built for candidates who plan to keep winning.
+          </p>
+          <a
+            href={checkoutHref}
+            className="mt-9 inline-flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-4 font-display text-lg font-extrabold text-white shadow-xl transition hover:bg-primary-container"
+          >
+            Buy Now — $10,000
+            <ArrowRight size={20} />
+          </a>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function FeatureList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <article className="rounded-2xl border border-outline-variant bg-white p-7 shadow-xl">
+      <h2 className="font-display text-3xl font-extrabold text-primary">{title}</h2>
+      <div className="mt-6 grid gap-3">
+        {items.map((item) => (
+          <div key={item} className="flex gap-3 rounded-md bg-surface p-4">
+            <CheckCircle2 className="mt-0.5 shrink-0 text-accent" size={20} />
+            <p className="font-semibold leading-6 text-primary">{item}</p>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <article className="flex h-full flex-col rounded-lg border border-white/15 bg-white/8 p-6 shadow-sm">
+      <h3 className="font-display text-2xl font-extrabold text-white">{question}</h3>
+      <p className="mt-3 leading-7 text-on-primary-container">{answer}</p>
+    </article>
+  );
+}
+
 function Footer() {
   return (
     <footer className="bg-primary py-12 text-white">
@@ -808,11 +1172,15 @@ function Footer() {
           </span>
           <div>
             <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
-            <p className="text-sm text-on-primary-container">Modern voter contact software for Democratic campaigns.</p>
+            <p className="text-sm text-on-primary-container">Fast, reliable voter-contact software for winning Democratic campaigns.</p>
+            <p className="mt-2 text-xs font-medium text-white/55">Made with 💪 in Virginia and Texas. | © 2026 Solarpunk LLC.</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-5 text-sm font-semibold text-on-primary-container">
+          <a href={docsUrl} className="transition hover:text-white">
+            Docs
+          </a>
           <span>Made in America</span>
           <span>American-owned</span>
           <span>Built to win</span>
@@ -823,19 +1191,27 @@ function Footer() {
 }
 
 export default function App() {
+  const isWinForLifePage = window.location.pathname === '/win-for-life';
+
   return (
     <div className="min-h-screen bg-surface">
       <Navbar />
-      <main>
-        <Hero />
-        <Platform />
-        <Pricing />
-        <Integrations />
-        <Comparison />
-        <Ownership />
-        <States />
-        <FinalCTA />
-      </main>
+      {isWinForLifePage ? (
+        <WinForLifePage />
+      ) : (
+        <main>
+          <Hero />
+          <Platform />
+          <HumanProof />
+          <Pricing />
+          <Testimonials />
+          <Integrations />
+          <Comparison />
+          <Ownership />
+          <States />
+          <FinalCTA />
+        </main>
+      )}
       <Footer />
     </div>
   );
