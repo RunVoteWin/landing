@@ -140,7 +140,7 @@ const integrations: Integration[] = [
     name: 'Microsoft Excel',
     logoSrc: 'logos/excel.svg',
     logoAlt: 'Microsoft Excel logo',
-    logoClassName: 'max-h-12 max-w-12',
+    logoClassName: 'max-h-10 max-w-44',
     text: 'Upload spreadsheets, normalize columns, and turn messy campaign lists into usable universes.',
   },
   {
@@ -156,6 +156,20 @@ const integrations: Integration[] = [
     logoAlt: 'ActBlue logo',
     logoClassName: 'max-h-9 max-w-36',
     text: 'Use supporter and fundraising exports to inform organizing, follow-up, and constituency work.',
+  },
+  {
+    name: 'Scale to Win',
+    logoSrc: 'logos/scale-to-win.svg',
+    logoAlt: 'Scale to Win logo',
+    logoClassName: 'max-h-14 max-w-36',
+    text: 'Connect Scale to Win texting, calling, and organizing exports with RunVoteWin field workflows.',
+  },
+  {
+    name: 'Switchboard',
+    logoSrc: 'logos/switchboard.svg',
+    logoAlt: 'Switchboard logo',
+    logoClassName: 'max-h-8 max-w-40',
+    text: 'Bring Switchboard digital, texting, forms, and supporter engagement data into your campaign workspace.',
   },
 ];
 
@@ -826,7 +840,7 @@ function Integrations() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
           {integrations.map((item) => (
             <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
               <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface px-4">
