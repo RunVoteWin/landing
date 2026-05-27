@@ -221,7 +221,8 @@ function formatPrice(value: number) {
 function postLead(payload: Record<string, unknown>) {
   return fetch(signupEndpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({
       ...payload,
       submittedAt: new Date().toISOString(),
