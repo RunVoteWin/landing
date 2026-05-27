@@ -272,7 +272,14 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
     setStatus('loading');
 
     try {
-      await postLead({ formType: 'updates', name, email, source: 'RunVoteWin landing page' });
+      const formData = new FormData(event.currentTarget);
+      await postLead({
+        formType: 'updates',
+        name,
+        email,
+        source: 'RunVoteWin landing page',
+        website: formData.get('website') ?? '',
+      });
 
       setStatus('success');
       setName('');
@@ -289,6 +296,15 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
       onSubmit={handleSubmit}
       className={`rounded-lg border border-outline-variant bg-white p-5 shadow-xl ${isHero ? 'max-w-xl' : ''}`}
     >
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="hidden"
+      />
+
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
           <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
@@ -594,6 +610,7 @@ function Pricing() {
     setStatus('loading');
 
     try {
+      const formData = new FormData(event.currentTarget);
       await postLead({
         formType: 'pricing',
         name,
@@ -604,6 +621,7 @@ function Pricing() {
         estimateMonthly: monthlyTotal,
         estimateFormatted: `${formatPrice(monthlyTotal)}/mo`,
         source: 'RunVoteWin pricing estimator',
+        website: formData.get('website') ?? '',
       });
 
       setStatus('success');
@@ -632,6 +650,15 @@ function Pricing() {
           </div>
 
           <form onSubmit={handlePricingSubmit} className="rounded-lg border border-outline-variant bg-surface p-6 shadow-xl">
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
+
             <div className="mb-6 flex items-center gap-3 text-primary">
               <SlidersHorizontal size={24} />
               <h3 className="font-display text-3xl font-extrabold">Pricing estimator</h3>

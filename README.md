@@ -37,7 +37,7 @@ npm run build
 
 ## Lead and Pricing Forms
 
-The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google Apps Script web app URL that accepts lead and pricing-estimate payloads.
+The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to the Google Apps Script web app URL that accepts lead and pricing-estimate payloads, writes them to the RunVoteWin landing signups sheet, and optionally pings Slack from server-side script properties.
 
 ```json
 {
@@ -61,10 +61,13 @@ If the variable is missing, the page falls back to a `mailto:` sales link and sh
 
 ### Google Apps Script setup
 
-1. Open the Google Sheet for leads.
+1. Open the Google Sheet for leads: `https://docs.google.com/spreadsheets/d/1bp_UeAov4yln670kaII9_jV1JJw53wqKZlIAfa2rx08/edit`.
 2. Go to **Extensions > Apps Script**.
 3. Paste the contents of `automation/google-apps-script/pricing-leads.gs`.
-4. Optional: set `TEAM_NOTIFY_EMAIL` in the script if the team should receive internal lead notifications.
+4. In Apps Script, open **Project Settings > Script properties** and set optional server-side secrets:
+   - `SLACK_SIGNUP_WEBHOOK_URL`: Slack incoming webhook URL for safe team pings. Never expose this in Vite/browser env vars.
+   - `TEAM_NOTIFY_EMAIL`: optional internal email fallback.
+   - `SEND_LEAD_EMAILS`: set to `true` only if requester confirmation/estimate emails should be sent from Apps Script.
 5. Click **Deploy > New deployment**.
 6. Choose **Web app**.
 7. Set **Execute as** to **Me**.
@@ -73,7 +76,7 @@ If the variable is missing, the page falls back to a `mailto:` sales link and sh
 10. In GitHub, add a repository secret named `VITE_SIGNUP_ENDPOINT` with that `/exec` URL.
 11. Re-run the GitHub Pages workflow or merge any change to rebuild the static site with the endpoint.
 
-The front end sends `text/plain` JSON with `mode: no-cors` so Google Apps Script can receive submissions from GitHub Pages without a CORS preflight.
+The front end sends `text/plain` JSON with `mode: no-cors` so Google Apps Script can receive submissions from GitHub Pages without a CORS preflight. Slack notification stays safe because only Apps Script reads `SLACK_SIGNUP_WEBHOOK_URL`; the browser never sees it. The script also uses a honeypot field, basic validation, duplicate throttling, and best-effort Slack notifications that never block sheet capture.
 
 ## Assets
 
