@@ -56,8 +56,7 @@ const navItems = [
 
 const organizingPhotoUrl =
   'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85';
-const protestPhotoUrl =
-  'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1200&q=85';
+const protestPhotoUrl = 'hero-crowd.jpg';
 const placeholderCandidatePhotoUrl =
   'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=85';
 
@@ -400,23 +399,33 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative overflow-hidden bg-hero pt-32 text-primary md:pt-36">
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 md:px-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:pb-24">
+      <div className="absolute inset-0">
+        <img
+          src={protestPhotoUrl}
+          alt="Crowd of people marching with signs and American flags"
+          className="h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-primary/78" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/82 via-primary/72 to-accent/45" />
+      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_32%)]" />
+      <div className="relative mx-auto grid max-w-7xl gap-14 px-5 pb-20 md:px-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
           className="min-w-0"
         >
-          <div className="mb-6 inline-flex max-w-full items-start gap-2 rounded-full border border-accent/25 bg-white/75 px-4 py-2 text-left text-sm font-bold leading-5 text-accent shadow-sm">
+          <div className="mb-6 inline-flex max-w-full items-start gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-left text-sm font-bold leading-5 text-white shadow-sm backdrop-blur">
             <Flag className="mt-0.5 shrink-0" size={16} />
             <span className="min-w-0">Built for campaigns that play to win</span>
           </div>
 
-          <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-primary md:text-7xl">
+          <h1 className="max-w-4xl font-display text-5xl font-extrabold leading-[1.02] tracking-tight text-white md:text-7xl">
             The modern campaign machine built to beat NGP VAN.
           </h1>
 
-          <p className="mt-7 max-w-2xl text-xl leading-8 text-on-surface-variant">
+          <p className="mt-7 max-w-2xl text-xl leading-8 text-white/90">
             RunVoteWin is fast, reliable voter-contact infrastructure for teams that cannot afford slow software, broken exports, or stale field reports. Built for serious Democratic campaigns that want the best version — not legacy baggage.
           </p>
 
