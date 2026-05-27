@@ -400,7 +400,7 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative overflow-hidden bg-hero pt-32 text-primary md:pt-36">
-      <div className="mx-auto grid max-w-7xl gap-14 px-5 pb-20 md:px-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:pb-24">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-14 md:px-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:pb-16">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
@@ -481,7 +481,7 @@ function Hero() {
 
 function Platform() {
   return (
-    <section id="platform" className="bg-surface py-24">
+    <section id="platform" className="bg-surface py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="max-w-3xl">
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Fast. Reliable. Ruthlessly modern.</p>
@@ -493,7 +493,7 @@ function Platform() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
           {platformFeatures.map((feature) => {
             const Icon = feature.icon;
             return (
@@ -531,7 +531,7 @@ function HumanProof() {
   ];
 
   return (
-    <section id="proof" className="bg-primary py-24 text-white">
+    <section id="proof" className="bg-primary py-16 text-white md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1fr] lg:items-end">
           <div>
@@ -545,7 +545,7 @@ function HumanProof() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid gap-5 lg:grid-cols-2">
           {moments.map((moment) => (
             <article key={moment.title} className="group relative min-h-[430px] overflow-hidden rounded-2xl border border-white/15 bg-white/8 shadow-2xl">
               <img src={moment.src} alt={moment.alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
@@ -615,7 +615,7 @@ function Pricing() {
   }
 
   return (
-    <section id="pricing" className="bg-white py-24">
+    <section id="pricing" className="bg-white py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr] lg:items-start">
           <div>
@@ -788,9 +788,9 @@ function Testimonials() {
   ];
 
   return (
-    <section className="bg-white py-24">
+    <section className="bg-white py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="mb-10 max-w-3xl">
+        <div className="mb-8 max-w-3xl">
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Trusted by candidates and operators</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
             Built for the people who have to win the race.
@@ -826,7 +826,7 @@ function Testimonials() {
 
 function Integrations() {
   return (
-    <section id="integrations" className="bg-surface-container-low py-24">
+    <section id="integrations" className="bg-surface-container-low py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.75fr_1fr] lg:items-end">
           <div>
@@ -840,7 +840,7 @@ function Integrations() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
           {integrations.map((item) => (
             <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
               <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface px-4">
@@ -864,9 +864,9 @@ function Integrations() {
 
 function Comparison() {
   return (
-    <section id="compare" className="bg-primary py-24 text-white">
+    <section id="compare" className="bg-primary py-16 text-white md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="mb-12 max-w-3xl">
+        <div className="mb-8 max-w-3xl">
           <p className="mb-4 text-sm font-extrabold uppercase text-secondary-container">RunVoteWin vs. NGP VAN</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">
             A brutally better alternative for campaigns that need speed, reliability, and control.
@@ -905,7 +905,7 @@ function Comparison() {
 
 function Ownership() {
   return (
-    <section className="bg-white py-24">
+    <section className="bg-white py-16 md:py-20">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 md:px-8 lg:grid-cols-2 lg:items-center">
         <div>
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Campaign-aligned ownership</p>
@@ -937,7 +937,7 @@ function Ownership() {
 
 function States() {
   return (
-    <section id="states" className="bg-primary-container py-24 text-white">
+    <section id="states" className="bg-primary-container py-16 text-white md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:items-end">
           <div>
@@ -951,7 +951,7 @@ function States() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {states.map((state) => (
             <div key={state} className="flex items-center gap-4 rounded-lg border border-white/15 bg-white/8 p-7">
               <ShieldCheck className="text-secondary-container" size={30} />
@@ -969,7 +969,7 @@ function States() {
 
 function FinalCTA() {
   return (
-    <section className="bg-hero py-24">
+    <section className="bg-hero py-16 md:py-20">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.9fr_1fr] lg:items-center">
         <div>
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Ready when your campaign is</p>
@@ -1060,7 +1060,7 @@ function WinForLifePage() {
         </div>
       </section>
 
-      <section className="bg-white py-24">
+      <section className="bg-white py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="grid gap-8 lg:grid-cols-[0.75fr_1fr] lg:items-start">
             <div>
@@ -1095,7 +1095,7 @@ function WinForLifePage() {
         </div>
       </section>
 
-      <section className="bg-surface-container-low py-24">
+      <section className="bg-surface-container-low py-16 md:py-20">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 md:px-8 lg:grid-cols-2">
           <FeatureList title="What features are there now?" items={currentFeatures} />
           <FeatureList title="What features are planned?" items={plannedFeatures} />
@@ -1129,7 +1129,7 @@ function WinForLifePage() {
         </div>
       </section>
 
-      <section className="bg-hero py-24">
+      <section className="bg-hero py-16 md:py-20">
         <div className="mx-auto max-w-4xl px-5 text-center md:px-8">
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Limited launch window</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
