@@ -171,36 +171,13 @@ const integrations: Integration[] = [
 ];
 
 const comparisonRows = [
-  {
-    label: 'Ownership',
-    runVoteWin: 'Made in America, by Americans, and 100% American-owned.',
-    ngp: 'Private-equity ownership with foreign sovereign fund exposure reported in the ownership chain.',
-  },
-  {
-    label: 'Pricing',
-    runVoteWin: 'Clear starting prices and an estimate before a sales call.',
-    ngp: 'Pricing is often unclear until a campaign goes through a local-party or sales process.',
-  },
-  {
-    label: 'Access',
-    runVoteWin: 'Get started directly when your campaign is ready.',
-    ngp: 'Access can depend on party approval, local committee timelines, or cycle-specific provisioning.',
-  },
-  {
-    label: 'Vote builder',
-    runVoteWin: 'Interactive vote builder designed for fast universe planning and iteration.',
-    ngp: 'Less interactive list-building experience for rapid field experimentation.',
-  },
-  {
-    label: 'Turf cutter',
-    runVoteWin: 'Intelligent turf cutter built with modern geospatial technology.',
-    ngp: 'Traditional turf cutter with partial efficiency gains.',
-  },
-  {
-    label: 'Continuity',
-    runVoteWin: 'Keep your access, workspace, and data continuity across future campaigns.',
-    ngp: 'Access and data continuity can reset or disappear between campaign cycles.',
-  },
+  { label: 'American-owned', runVoteWin: true, ngp: false },
+  { label: 'Transparent pricing', runVoteWin: true, ngp: false },
+  { label: 'Direct campaign signup', runVoteWin: true, ngp: false },
+  { label: 'Modern vote builder', runVoteWin: true, ngp: false },
+  { label: 'Smart turf cutter', runVoteWin: true, ngp: false },
+  { label: 'Data continuity across cycles', runVoteWin: true, ngp: false },
+  { label: 'Built-in campaign workspace', runVoteWin: true, ngp: false },
 ];
 
 const states = ['Texas', 'Virginia'];
@@ -934,26 +911,30 @@ function Comparison() {
         </div>
 
         <div className="overflow-hidden rounded-lg border border-white/15 bg-white/7">
-          <div className="grid gap-4 border-b border-white/15 bg-white/10 p-5 md:grid-cols-[0.32fr_1fr_1fr]">
-            <div className="hidden md:block"></div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl" aria-label="United States flag">🇺🇸</span>
-              <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
+          <div className="grid grid-cols-[1fr_6rem_6rem] items-center gap-3 border-b border-white/15 bg-white/10 p-4 sm:grid-cols-[1fr_10rem_10rem] sm:p-5">
+            <div className="text-sm font-extrabold uppercase tracking-wide text-secondary-container">Feature</div>
+            <div className="flex items-center justify-center gap-2">
+              <span className="hidden text-2xl sm:inline" aria-label="United States flag">🇺🇸</span>
+              <p className="font-display text-lg font-extrabold sm:text-2xl">RunVoteWin</p>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl" aria-label="Saudi Arabia flag">🇸🇦</span>
-              <img src="ngpvan-logo.svg" alt="NGP VAN" className="h-7 w-auto rounded bg-white px-2 py-1" />
+            <div className="flex items-center justify-center gap-2">
+              <span className="hidden text-2xl sm:inline" aria-label="Saudi Arabia flag">🇸🇦</span>
+              <img src="ngpvan-logo.svg" alt="NGP VAN" className="h-6 w-auto rounded bg-white px-2 py-1 sm:h-7" />
             </div>
           </div>
 
           {comparisonRows.map((row) => (
-            <div key={row.label} className="grid gap-5 border-b border-white/12 p-5 last:border-b-0 md:grid-cols-[0.32fr_1fr_1fr]">
-              <p className="font-display text-xl font-extrabold text-secondary-container">{row.label}</p>
-              <div className="rounded-md bg-white/8 p-4">
-                <p className="leading-7 text-white">{row.runVoteWin}</p>
+            <div key={row.label} className="grid grid-cols-[1fr_6rem_6rem] items-center gap-3 border-b border-white/12 p-4 last:border-b-0 sm:grid-cols-[1fr_10rem_10rem] sm:p-5">
+              <p className="font-display text-lg font-extrabold text-white sm:text-xl">{row.label}</p>
+              <div className="flex justify-center">
+                <span className="rounded-full bg-emerald-400/18 px-3 py-1 text-3xl leading-none" aria-label="RunVoteWin supports this feature">
+                  {row.runVoteWin ? '✅' : '❌'}
+                </span>
               </div>
-              <div className="rounded-md bg-black/12 p-4">
-                <p className="leading-7 text-on-primary-container">{row.ngp}</p>
+              <div className="flex justify-center">
+                <span className="rounded-full bg-black/16 px-3 py-1 text-3xl leading-none" aria-label="NGP VAN does not support this feature">
+                  {row.ngp ? '✅' : '❌'}
+                </span>
               </div>
             </div>
           ))}
