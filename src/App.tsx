@@ -592,7 +592,7 @@ function Pricing() {
   );
 
   const monthlyTotal = selectedCampaign?.price ?? null;
-  const canShowEstimate = Boolean(selectedCampaign && role);
+  const currentStep = !selectedCampaign ? 1 : !role ? 2 : 3;
 
   async function handlePricingSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -641,7 +641,7 @@ function Pricing() {
               Get a clear campaign estimate by email.
             </h2>
             <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-              Campaigns deserve straightforward numbers. Choose the size of your campaign, tell us who you are, and we will send a pricing estimate you can share with the team.
+              Campaigns deserve straightforward numbers. Answer one question at a time and we will send a pricing estimate you can share with the team.
             </p>
             <p className="mt-4 text-sm font-semibold leading-6 text-on-surface-variant">
               Final pricing depends on state availability, data needs, and compliance requirements. This gives you a serious planning number before a sales call.
@@ -663,130 +663,169 @@ function Pricing() {
               <h3 className="font-display text-3xl font-extrabold">Pricing estimator</h3>
             </div>
 
-            <div>
-              <p className="mb-3 text-sm font-extrabold uppercase text-primary">Step 1 · Campaign size</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {campaignOptions.map((option) => (
-                  <button
-                    type="button"
-                    key={option.id}
-                    onClick={() => setCampaignId(option.id)}
-                    className={`rounded-md border p-4 text-left transition ${
-                      campaignId === option.id
-                        ? 'border-accent bg-white shadow-md'
-                        : 'border-outline-variant bg-surface-container-low hover:bg-white'
-                    }`}
-                  >
-                    <span className="flex items-center justify-between gap-3">
-                      <span className="font-display text-xl font-extrabold text-primary">{option.label}</span>
-                      <span className="text-sm font-bold text-accent">Choose</span>
-                    </span>
-                    <span className="mt-2 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
-                  </button>
-                ))}
-              </div>
+            <div className="mb-6 flex gap-2 text-xs font-bold uppercase tracking-wide text-on-surface-variant">
+              {[1, 2, 3].map((step) => (
+                <div
+                  key={step}
+                  className={`rounded-full px-3 py-1 ${currentStep === step ? 'bg-primary text-white' : currentStep > step ? 'bg-primary/12 text-primary' : 'bg-surface-container-low'}`}
+                >
+                  Step {step}
+                </div>
+              ))}
             </div>
 
-            <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_0.8fr]">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label>
-                  <span className="mb-2 block text-sm font-bold text-primary">Name</span>
-                  <input
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
-                    required
-                    className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-                    placeholder="Jane Organizer"
-                    type="text"
-                  />
-                </label>
-
-                <label>
-                  <span className="mb-2 block text-sm font-bold text-primary">Email</span>
-                  <input
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    required
-                    className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-                    placeholder="jane@campaign.org"
-                    type="email"
-                  />
-                </label>
-              </div>
-
-              <div>
-                <p className="mb-2 text-sm font-extrabold uppercase text-primary">Step 2 · Your role</p>
-                <div className="grid gap-2">
-                  {roleOptions.map((option) => (
-                    <label
+            {currentStep === 1 && (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-extrabold uppercase text-primary">Step 1 · Campaign size</p>
+                  <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+                    Start with the size of the race. We will tighten the estimate from there.
+                  </p>
+                </div>
+                <div className="grid gap-3">
+                  {campaignOptions.map((option) => (
+                    <button
+                      type="button"
                       key={option.id}
-                      className={`flex cursor-pointer items-center gap-3 rounded-md border px-4 py-3 text-sm font-bold transition ${
-                        role === option.id
-                          ? 'border-purple bg-white text-primary shadow-sm'
-                          : 'border-outline-variant bg-surface-container-low text-on-surface-variant'
-                      }`}
+                      onClick={() => setCampaignId(option.id)}
+                      className="rounded-md border border-outline-variant bg-white p-4 text-left transition hover:border-accent hover:shadow-sm"
                     >
-                      <input
-                        type="radio"
-                        name="role"
-                        value={option.id}
-                        checked={role === option.id}
-                        onChange={() => setRole(option.id)}
-                        className="accent-primary"
-                      />
-                      {option.label}
-                    </label>
+                      <span className="flex items-center justify-between gap-3">
+                        <span>
+                          <span className="block font-display text-xl font-extrabold text-primary">{option.label}</span>
+                          <span className="mt-1 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
+                        </span>
+                        <ArrowRight className="shrink-0 text-accent" size={18} />
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="mt-7 rounded-lg bg-primary p-6 text-white">
-              <p className="text-sm font-bold uppercase text-secondary-container">Step 3 · Estimate</p>
-              {canShowEstimate && monthlyTotal !== null ? (
-                <>
+            {currentStep === 2 && selectedCampaign && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-extrabold uppercase text-primary">Step 2 · Your role</p>
+                    <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+                      Campaign size selected: <span className="font-bold text-primary">{selectedCampaign.label}</span>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCampaignId(null);
+                      setRole(null);
+                      setStatus('idle');
+                    }}
+                    className="text-sm font-bold text-accent"
+                  >
+                    Back
+                  </button>
+                </div>
+                <div className="grid gap-3">
+                  {roleOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.id}
+                      onClick={() => setRole(option.id)}
+                      className="flex items-center justify-between rounded-md border border-outline-variant bg-white px-4 py-4 text-left text-sm font-bold text-primary transition hover:border-accent hover:shadow-sm"
+                    >
+                      <span>{option.label}</span>
+                      <ArrowRight className="shrink-0 text-accent" size={18} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {currentStep === 3 && selectedCampaign && role && monthlyTotal !== null && (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-extrabold uppercase text-primary">Step 3 · Send the estimate</p>
+                    <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+                      <span className="font-bold text-primary">{selectedCampaign.label}</span> · {roleOptions.find((option) => option.id === role)?.label}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRole(null);
+                      setStatus('idle');
+                    }}
+                    className="text-sm font-bold text-accent"
+                  >
+                    Back
+                  </button>
+                </div>
+
+                <div className="rounded-lg bg-primary p-5 text-white">
+                  <p className="text-sm font-bold uppercase text-secondary-container">Estimated platform price</p>
                   <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                       <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
                       <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
                     </div>
-                    <button
-                      type="submit"
-                      disabled={status === 'loading'}
-                      className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 font-bold text-primary transition hover:bg-secondary-container disabled:cursor-not-allowed disabled:opacity-70"
-                    >
-                      {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
-                      <ArrowRight size={18} />
-                    </button>
                   </div>
-                  <p className="mt-5 text-sm leading-6 text-on-primary-container">
+                  <p className="mt-4 text-sm leading-6 text-on-primary-container">
                     Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
                   </p>
-                </>
-              ) : (
-                <div className="mt-3 rounded-md border border-white/15 bg-white/10 p-5">
-                  <p className="font-display text-2xl font-extrabold">Answer the two questions above to reveal pricing.</p>
-                  <p className="mt-2 text-sm font-semibold leading-6 text-on-primary-container">
-                    We hide the number until the campaign size and role are selected so the estimator feels like a quick guided flow, not a static rate card.
-                  </p>
                 </div>
-              )}
-              {status === 'needs-endpoint' && (
-                <p className="mt-4 rounded-md bg-white/10 p-3 text-sm font-semibold leading-6 text-white">
-                  Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
-                </p>
-              )}
-              {status === 'success' && (
-                <p className="mt-4 rounded-md bg-secondary-container/20 p-3 text-sm font-semibold text-secondary-container">
-                  Estimate request received. Check your inbox in a moment.
-                </p>
-              )}
-              {status === 'error' && (
-                <p className="mt-4 rounded-md bg-red-500/20 p-3 text-sm font-semibold text-white">
-                  Something went wrong. Please try again.
-                </p>
-              )}
-            </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label>
+                    <span className="mb-2 block text-sm font-bold text-primary">Name</span>
+                    <input
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      required
+                      className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                      placeholder="Jane Organizer"
+                      type="text"
+                    />
+                  </label>
+
+                  <label>
+                    <span className="mb-2 block text-sm font-bold text-primary">Email</span>
+                    <input
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      required
+                      className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                      placeholder="jane@campaign.org"
+                      type="email"
+                    />
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 font-bold text-white transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            )}
+
+            {status === 'needs-endpoint' && (
+              <p className="mt-4 rounded-md bg-primary/8 p-3 text-sm font-semibold leading-6 text-primary">
+                Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+              </p>
+            )}
+            {status === 'success' && (
+              <p className="mt-4 rounded-md bg-secondary/10 p-3 text-sm font-semibold text-secondary">
+                Estimate request received. Check your inbox in a moment.
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
+                Something went wrong. Please try again.
+              </p>
+            )}
           </form>
         </div>
       </div>
