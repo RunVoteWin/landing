@@ -39,12 +39,6 @@ The landing page posts to `VITE_SIGNUP_ENDPOINT`, defaulting to `/api/leads` on 
 - basic validation
 - a hidden honeypot field for spam reduction
 
-Target sheet:
-
-```txt
-https://docs.google.com/spreadsheets/d/1bp_UeAov4yln670kaII9_jV1JJw53wqKZlIAfa2rx08/edit
-```
-
 Example payload:
 
 ```json
@@ -71,8 +65,8 @@ VITE_WIN_FOR_LIFE_CHECKOUT_URL=https://buy.stripe.com/YOUR_PAYMENT_LINK
 Server-side for `/api/leads`:
 
 ```txt
-LEADS_SHEET_ID=1bp_UeAov4yln670kaII9_jV1JJw53wqKZlIAfa2rx08
-LEADS_SHEET_NAME=Sheet1
+LEADS_SHEET_ID=your_private_sheet_id
+LEADS_SHEET_NAME=Leads
 GOOGLE_SERVICE_ACCOUNT_EMAIL=runvotewin-leads@your-project.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 SLACK_SIGNUP_WEBHOOK_URL=https://hooks.slack.com/services/...

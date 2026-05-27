@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 
-const SHEET_ID = process.env.LEADS_SHEET_ID || '1bp_UeAov4yln670kaII9_jV1JJw53wqKZlIAfa2rx08';
-const SHEET_NAME = process.env.LEADS_SHEET_NAME || 'Sheet1';
+const SHEET_ID = process.env.LEADS_SHEET_ID;
+const SHEET_NAME = process.env.LEADS_SHEET_NAME || 'Leads';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
 const MAX_FIELD_LENGTH = 500;
@@ -180,8 +180,8 @@ async function getGoogleAccessToken() {
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-  if (!clientEmail || !privateKey) {
-    throw new Error('Missing Google service account env vars');
+  if (!SHEET_ID || !clientEmail || !privateKey) {
+    throw new Error('Missing Google Sheets lead capture env vars');
   }
 
   const now = Math.floor(Date.now() / 1000);
