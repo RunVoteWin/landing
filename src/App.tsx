@@ -165,7 +165,7 @@ const integrations: Integration[] = [
     name: 'Switchboard',
     logoSrc: 'logos/switchboard.svg',
     logoAlt: 'Switchboard logo',
-    logoClassName: 'max-h-8 max-w-40',
+    logoClassName: 'max-h-8 max-w-full',
     text: 'Bring Switchboard digital, texting, forms, and supporter engagement data into your campaign workspace.',
   },
 ];
@@ -900,10 +900,10 @@ function Integrations() {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {integrations.map((item) => (
-            <article key={item.name} className="rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
-              <div className="mb-5 flex h-16 items-center rounded-md border border-outline-variant bg-surface px-4">
+            <article key={item.name} className="min-w-0 rounded-lg border border-outline-variant bg-white p-5 shadow-sm">
+              <div className="mb-5 flex h-16 min-w-0 items-center justify-center overflow-hidden rounded-md border border-outline-variant bg-surface px-4">
                 <img
                   src={`${import.meta.env.BASE_URL}${item.logoSrc}`}
                   alt={item.logoAlt}
