@@ -20,7 +20,8 @@ import {
 } from 'lucide-react';
 
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '/api/leads';
-const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? '';
+const victoryPassCheckoutUrl = 'https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00';
+const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? victoryPassCheckoutUrl;
 const appUrl = 'https://app.runvotewin.com';
 const docsUrl = 'https://docs.runvotewin.com';
 
@@ -395,8 +396,8 @@ function Hero() {
           alt="Crowd of people marching with signs and American flags"
           className="h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-primary/78" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/82 via-primary/72 to-accent/45" />
+        <div className="absolute inset-0 bg-primary/66" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-primary/61 to-accent/38" />
       </div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_32%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-5 pb-14 md:px-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:pb-16">
@@ -1076,11 +1077,6 @@ function WinForLifePage() {
                 Back to platform
               </a>
             </div>
-            {!lifetimeCheckoutUrl && (
-              <p className="mt-4 max-w-xl rounded-md border border-white/20 bg-white/10 p-3 text-sm font-semibold text-on-primary-container backdrop-blur">
-                Stripe checkout is ready to connect. Add VITE_WIN_FOR_LIFE_CHECKOUT_URL to point this button at the live Stripe payment link.
-              </p>
-            )}
           </div>
 
           <div className="rounded-2xl border border-white/18 bg-white/12 p-6 shadow-2xl backdrop-blur-xl">
