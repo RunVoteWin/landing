@@ -19,7 +19,7 @@ import {
   Vote,
 } from 'lucide-react';
 
-const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
+const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '/api/leads';
 const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? '';
 const appUrl = 'https://app.runvotewin.com';
 const docsUrl = 'https://docs.runvotewin.com';
@@ -246,8 +246,7 @@ function formatPrice(value: number) {
 function postLead(payload: Record<string, unknown>) {
   return fetch(signupEndpoint, {
     method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       ...payload,
       submittedAt: new Date().toISOString(),
