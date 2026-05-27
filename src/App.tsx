@@ -58,8 +58,6 @@ const organizingPhotoUrl =
   'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85';
 const protestPhotoUrl =
   'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1200&q=85';
-const placeholderCandidatePhotoUrl =
-  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=85';
 
 const testimonialQuote =
   "After I ran for Congress, I realized how far behind Democratic campaigns were on knowing our voters. I needed RunVoteWin's modern Voter CRM and Canvassing Suite to spend our funding more effectively than any other campaign. It's ages ahead of any other product and is built by Americans.";
@@ -834,27 +832,17 @@ function Pricing() {
 }
 
 function Testimonials() {
-  const testimonials = [
-    {
-      quote: testimonialQuote,
-      name: 'Joe Schiarizzi',
-      role: 'U.S. Congressional candidate, VA-07',
-      image: 'joe-schiarizzi-headshot.jpg',
-      alt: "Joe Schiarizzi, U.S. Congressional candidate for Virginia's 7th District",
-    },
-    {
-      quote:
-        'Placeholder launch-partner quote: RunVoteWin gives our team the speed and data continuity we need to organize aggressively without fighting legacy software.',
-      name: 'Launch Partner',
-      role: 'Campaign director testimonial placeholder',
-      image: placeholderCandidatePhotoUrl,
-      alt: 'Placeholder portrait of a campaign leader',
-    },
-  ];
+  const testimonial = {
+    quote: testimonialQuote,
+    name: 'Joe Schiarizzi',
+    role: 'U.S. Congressional candidate, VA-07',
+    image: 'joe-schiarizzi-headshot.jpg',
+    alt: "Joe Schiarizzi, U.S. Congressional candidate for Virginia's 7th District",
+  };
 
   return (
     <section className="bg-white py-16 md:py-20">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+      <div className="mx-auto max-w-5xl px-5 md:px-8">
         <div className="mb-8 max-w-3xl">
           <p className="mb-4 text-sm font-extrabold uppercase text-accent">Trusted by candidates and operators</p>
           <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
@@ -862,28 +850,26 @@ function Testimonials() {
           </h2>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          {testimonials.map((testimonial) => (
-            <article key={testimonial.name} className="rounded-2xl border border-outline-variant bg-surface p-8 shadow-xl md:p-10">
-              <blockquote className="font-display text-2xl font-extrabold leading-tight text-primary md:text-3xl">
+        <article className="rounded-2xl border border-outline-variant bg-surface p-6 shadow-lg md:p-8">
+          <div className="flex flex-col gap-5 md:flex-row md:items-start">
+            <img
+              src={testimonial.image}
+              alt={testimonial.alt}
+              className="h-16 w-16 shrink-0 rounded-full object-cover object-center shadow-md"
+            />
+            <div className="min-w-0">
+              <blockquote className="text-lg font-semibold leading-8 text-primary md:text-xl">
                 “{testimonial.quote}”
               </blockquote>
-              <div className="mt-8 flex items-center gap-4 border-t border-outline-variant pt-6">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.alt}
-                  className="h-16 w-16 shrink-0 rounded-full border-4 border-white object-cover object-center shadow-lg"
-                />
-                <div>
-                  <p className="font-display text-2xl font-extrabold text-primary">{testimonial.name}</p>
-                  <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-on-surface-variant">
-                    {testimonial.role}
-                  </p>
-                </div>
+              <div className="mt-4">
+                <p className="font-display text-xl font-extrabold text-primary">{testimonial.name}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
+                  {testimonial.role}
+                </p>
               </div>
-            </article>
-          ))}
-        </div>
+            </div>
+          </div>
+        </article>
       </div>
     </section>
   );
