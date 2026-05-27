@@ -1,43 +1,51 @@
-# RunVoteWin Landing Page
+# RunVoteWin Landing
 
-Landing page for RunVoteWin, a modern canvassing and voter data system for Democratic Party campaigns.
-
-Live site: https://runvotewin.com/
+Vite + React landing page for RunVoteWin.
 
 ## Development
 
-Prerequisites:
-
-- Node.js 22 or newer
-- npm
-
-Install dependencies:
-
-```sh
+```bash
 npm install
-```
-
-Start the local development server:
-
-```sh
 npm run dev
 ```
 
-Run type checking:
+## Build
 
-```sh
-npm run lint
-```
-
-Build for production:
-
-```sh
+```bash
 npm run build
 ```
 
+## Deployment
+
+This site is intended to deploy on **Vercel**.
+
+Recommended Vercel settings:
+
+- Framework preset: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- Install command: `npm ci`
+
+The `vercel.json` rewrite keeps client-side routes such as `/win-for-life` working while leaving `/api/*` for Vercel Functions.
+
 ## Lead and Pricing Forms
 
-The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google Apps Script web app URL that accepts lead and pricing-estimate payloads.
+The landing page posts to `VITE_SIGNUP_ENDPOINT`, defaulting to `/api/leads` on Vercel.
+
+`/api/leads` safely handles:
+
+- appending lead/pricing submissions to Google Sheets
+- optional Slack notifications
+- basic validation
+- a hidden honeypot field for spam reduction
+
+Target sheet:
+
+```txt
+https://docs.google.com/spreadsheets/d/1bp_UeAov4yln670kaII9_jV1JJw53wqKZlIAfa2rx08/edit
+```
+
+Example payload:
 
 ```json
 {
@@ -51,7 +59,28 @@ The landing page reads `VITE_SIGNUP_ENDPOINT` at build time. Set it to a Google 
 }
 ```
 
-Until that endpoint is configured, the forms render normally but display a connection-needed message on submit.
+### Vercel environment variables
+
+Client-side:
+
+```txt
+VITE_SIGNUP_ENDPOINT=/api/leads
+VITE_WIN_FOR_LIFE_CHECKOUT_URL=https://buy.stripe.com/YOUR_PAYMENT_LINK
+```
+
+Server-side for `/api/leads`:
+
+```txt
+LEADS_SHEET_ID=1bp_UeAov4yln670kaII9_jV1JJw53wqKZlIAfa2rx08
+LEADS_SHEET_NAME=Sheet1
+GOOGLE_SERVICE_ACCOUNT_EMAIL=runvotewin-leads@your-project.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+SLACK_SIGNUP_WEBHOOK_URL=https://hooks.slack.com/services/...
+```
+
+Create a Google Cloud service account, enable the Google Sheets API, and share the target sheet with the service account email as an editor.
+
+Slack stays safe because `SLACK_SIGNUP_WEBHOOK_URL` is read only by the Vercel Function. It is never exposed to the browser.
 
 ## Win for Life Stripe Checkout
 
@@ -59,30 +88,6 @@ The `/win-for-life` page reads `VITE_WIN_FOR_LIFE_CHECKOUT_URL` at build time. S
 
 If the variable is missing, the page falls back to a `mailto:` sales link and shows a small setup note.
 
-### Google Apps Script setup
-
-1. Open the Google Sheet for leads.
-2. Go to **Extensions > Apps Script**.
-3. Paste the contents of `automation/google-apps-script/pricing-leads.gs`.
-4. Optional: set `TEAM_NOTIFY_EMAIL` in the script if the team should receive internal lead notifications.
-5. Click **Deploy > New deployment**.
-6. Choose **Web app**.
-7. Set **Execute as** to **Me**.
-8. Set **Who has access** to **Anyone**.
-9. Deploy and copy the web app URL ending in `/exec`.
-10. In GitHub, add a repository secret named `VITE_SIGNUP_ENDPOINT` with that `/exec` URL.
-11. Re-run the GitHub Pages workflow or merge any change to rebuild the static site with the endpoint.
-
-The front end sends `text/plain` JSON with `mode: no-cors` so Google Apps Script can receive submissions from GitHub Pages without a CORS preflight.
-
 ## Assets
 
 The NGP VAN comparison logo is sourced from Wikimedia Commons: https://commons.wikimedia.org/wiki/File:NGPVAN_Logo.svg
-
-## Deployment
-
-GitHub Pages is deployed by `.github/workflows/deploy-pages.yml`.
-
-The Vite `base` option is set to `./` so the static build works from the custom domain root without hard-coded repository paths.
-
-In GitHub Pages settings, the source should be **GitHub Actions**. Do not serve the repository root directly; that serves `src/main.tsx` instead of the static `dist` build and will fail in the browser.
