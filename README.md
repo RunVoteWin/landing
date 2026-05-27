@@ -26,18 +26,13 @@ Recommended Vercel settings:
 - Output directory: `dist`
 - Install command: `npm ci`
 
-The `vercel.json` rewrite keeps client-side routes such as `/win-for-life` working while leaving `/api/*` for Vercel Functions.
+The `vercel.json` rewrite keeps client-side routes such as `/win-for-life` working.
 
 ## Lead and Pricing Forms
 
-The landing page posts to `VITE_SIGNUP_ENDPOINT`, defaulting to `/api/leads` on Vercel.
+The landing page posts lead and pricing form submissions to `VITE_SIGNUP_ENDPOINT`.
 
-`/api/leads` safely handles:
-
-- appending lead/pricing submissions to Google Sheets
-- optional Slack notifications
-- basic validation
-- a hidden honeypot field for spam reduction
+Use a Google Apps Script web app URL for that value. The Apps Script should handle the private work: appending to the lead sheet and optionally notifying Slack.
 
 Example payload:
 
@@ -55,32 +50,16 @@ Example payload:
 
 ### Vercel environment variables
 
-Client-side:
-
 ```txt
-VITE_SIGNUP_ENDPOINT=/api/leads
-VITE_WIN_FOR_LIFE_CHECKOUT_URL=https://buy.stripe.com/YOUR_PAYMENT_LINK
+VITE_SIGNUP_ENDPOINT=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
+VITE_WIN_FOR_LIFE_CHECKOUT_URL=https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00
 ```
 
-Server-side for `/api/leads`:
-
-```txt
-LEADS_SHEET_ID=your_private_sheet_id
-LEADS_SHEET_NAME=Leads
-GOOGLE_SERVICE_ACCOUNT_EMAIL=runvotewin-leads@your-project.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-SLACK_SIGNUP_WEBHOOK_URL=https://hooks.slack.com/services/...
-```
-
-Create a Google Cloud service account, enable the Google Sheets API, and share the target sheet with the service account email as an editor.
-
-Slack stays safe because `SLACK_SIGNUP_WEBHOOK_URL` is read only by the Vercel Function. It is never exposed to the browser.
+No Google Sheet IDs, Slack webhooks, or Google API credentials belong in this public repo.
 
 ## Win for Life Stripe Checkout
 
 The `/win-for-life` page reads `VITE_WIN_FOR_LIFE_CHECKOUT_URL` at build time. Set it to the Stripe Payment Link or Checkout URL for the $10,000 Founding Victory Pass.
-
-If the variable is missing, the page falls back to a `mailto:` sales link and shows a small setup note.
 
 ## Assets
 

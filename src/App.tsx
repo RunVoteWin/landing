@@ -19,7 +19,7 @@ import {
   Vote,
 } from 'lucide-react';
 
-const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '/api/leads';
+const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 const victoryPassCheckoutUrl = 'https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00';
 const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? victoryPassCheckoutUrl;
 const appUrl = 'https://app.runvotewin.com';
@@ -322,7 +322,7 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
 
       {status === 'needs-endpoint' && (
         <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
-          This form is ready for the Google Sheets endpoint.
+          This form is ready. Add the Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
         </p>
       )}
       {status === 'success' && (
