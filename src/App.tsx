@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowRight,
@@ -27,16 +27,43 @@ const docsUrl = 'https://docs.runvotewin.com';
 
 type SignupFormVariant = 'hero' | 'compact';
 
-type PricingOption = {
-  id: string;
-  label: string;
-  description: string;
-  price: number;
-};
-
 type RoleOption = {
   id: string;
   label: string;
+};
+
+type PricingTier = 'Basic' | 'Pro' | 'Premium';
+
+type PricingConfig = {
+  states: Array<{ code: string; label: string }>;
+  races: Array<{ id: string; label: string }>;
+  terms: Array<{ id: string; label: string }>;
+  tiers: PricingTier[];
+};
+
+type PricingResult = {
+  state: string;
+  stateLabel: string;
+  race: string;
+  raceLabel: string;
+  term: string;
+  termLabel: string;
+  tier: PricingTier;
+  voters: number;
+  voterBucket: string;
+  cycleMonths: number;
+  monthly: number;
+  discountPct: number;
+  discountAmount: number;
+  monthlyTotal: number;
+  orderTotal: number;
+  savings: {
+    voterFile: { monthly: number; cycle: number };
+    relationalOrganizing: { monthly: number; cycle: number };
+    canvasserSuit: { monthly: number; cycle: number };
+    totalMonthly: number;
+    totalCycle: number;
+  };
 };
 
 type Integration = {
@@ -86,32 +113,11 @@ const platformFeatures = [
   },
 ];
 
-const campaignOptions: PricingOption[] = [
-  {
-    id: 'local',
-    label: 'Local / county',
-    description: 'Municipal, school board, countywide, and targeted local programs.',
-    price: 249,
-  },
-  {
-    id: 'legislative',
-    label: 'State legislative',
-    description: 'State house, senate, and district-level campaigns with serious field plans.',
-    price: 599,
-  },
-  {
-    id: 'congressional',
-    label: 'Congressional',
-    description: 'U.S. House campaigns that need professional field and voter contact infrastructure.',
-    price: 1250,
-  },
-  {
-    id: 'coordinated',
-    label: 'Coordinated or IE',
-    description: 'Multi-district programs, committees, and independent expenditure operations.',
-    price: 2500,
-  },
-];
+const tierDescriptions: Record<PricingTier, string> = {
+  Basic: 'Core voter file, dashboard, turf cutter, scripts, canvasser + volunteer management.',
+  Pro: 'Everything in Basic plus enhanced voter file, canvasser geo-location, and field office suite.',
+  Premium: 'Everything in Pro plus customized voter file, relational organizing, and network data.',
+};
 
 const roleOptions: RoleOption[] = [
   { id: 'candidate', label: 'Candidate' },
@@ -216,6 +222,22 @@ function formatPrice(value: number) {
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function formatMoney(value: number) {
+  const hasCents = Math.round(value * 100) % 100 !== 0;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: hasCents ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatVoters(value: number) {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(value % 1_000_000 === 0 ? 0 : 1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(value % 1_000 === 0 ? 0 : 1)}K`;
+  return value.toString();
 }
 
 function postLead(payload: Record<string, unknown>) {
@@ -566,26 +588,99 @@ function HumanProof() {
 }
 
 function Pricing() {
-  const [campaignId, setCampaignId] = useState<string | null>(null);
+  const [config, setConfig] = useState<PricingConfig | null>(null);
+  const [configError, setConfigError] = useState<string | null>(null);
+  const [stateCode, setStateCode] = useState<string | null>(null);
+  const [raceId, setRaceId] = useState<string | null>(null);
+  const [termId, setTermId] = useState<string | null>(null);
+  const [tier, setTier] = useState<PricingTier | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [result, setResult] = useState<PricingResult | null>(null);
+  const [resultStatus, setResultStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
 
-  const selectedCampaign = useMemo(
-    () => campaignOptions.find((option) => option.id === campaignId) ?? null,
-    [campaignId],
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/pricing/config')
+      .then((res) => {
+        if (!res.ok) throw new Error(`Config fetch failed: ${res.status}`);
+        return res.json();
+      })
+      .then((data: PricingConfig) => {
+        if (cancelled) return;
+        setConfig(data);
+        if (data.states.length === 1) setStateCode(data.states[0]!.code);
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setConfigError(err.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!stateCode || !raceId || !termId || !tier) return;
+    let cancelled = false;
+    setResultStatus('loading');
+    fetch('/api/pricing/calculate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ state: stateCode, race: raceId, term: termId, tier }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body?.error ?? `Calculate failed: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data: PricingResult) => {
+        if (cancelled) return;
+        setResult(data);
+        setResultStatus('idle');
+      })
+      .catch(() => {
+        if (!cancelled) setResultStatus('error');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [stateCode, raceId, termId, tier]);
+
+  const selectedState = useMemo(
+    () => config?.states.find((s) => s.code === stateCode) ?? null,
+    [config, stateCode],
+  );
+  const selectedRace = useMemo(
+    () => config?.races.find((r) => r.id === raceId) ?? null,
+    [config, raceId],
+  );
+  const selectedTerm = useMemo(
+    () => config?.terms.find((t) => t.id === termId) ?? null,
+    [config, termId],
   );
 
-  const monthlyTotal = selectedCampaign?.price ?? null;
-  const currentStep = !selectedCampaign ? 1 : !role ? 2 : 3;
+  const currentStep = !stateCode || !raceId ? 1 : !termId || !tier ? 2 : 3;
+
+  function resetTo(step: 1 | 2) {
+    if (step <= 1) {
+      setStateCode(config && config.states.length === 1 ? config.states[0]!.code : null);
+      setRaceId(null);
+    }
+    setTermId(null);
+    setTier(null);
+    setResult(null);
+    setResultStatus('idle');
+    setStatus('idle');
+  }
 
   async function handlePricingSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!selectedCampaign || !role || monthlyTotal === null) {
-      return;
-    }
+    if (!result || !role) return;
 
     if (!signupEndpoint) {
       setStatus('needs-endpoint');
@@ -601,10 +696,23 @@ function Pricing() {
         name,
         email,
         role,
-        campaignSize: selectedCampaign.id,
-        campaignSizeLabel: selectedCampaign.label,
-        estimateMonthly: monthlyTotal,
-        estimateFormatted: `${formatPrice(monthlyTotal)}/mo`,
+        state: result.state,
+        stateLabel: result.stateLabel,
+        race: result.race,
+        raceLabel: result.raceLabel,
+        term: result.term,
+        termLabel: result.termLabel,
+        tier: result.tier,
+        voters: result.voters,
+        voterBucket: result.voterBucket,
+        cycleMonths: result.cycleMonths,
+        monthly: result.monthly,
+        discountPct: result.discountPct,
+        discountAmount: result.discountAmount,
+        monthlyTotal: result.monthlyTotal,
+        orderTotal: result.orderTotal,
+        savings: result.savings,
+        estimateFormatted: `${formatMoney(result.monthlyTotal)}/mo · ${formatMoney(result.orderTotal)} total`,
         source: 'RunVoteWin pricing estimator',
         website: formData.get('website') ?? '',
       });
@@ -627,7 +735,7 @@ function Pricing() {
               Get a clear campaign estimate by email.
             </h2>
             <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-              Campaigns deserve straightforward numbers. Answer one question at a time and we will send a pricing estimate you can share with the team.
+              Campaigns deserve straightforward numbers. Tell us the race, the term, and the tier — we will send a pricing estimate you can share with the team.
             </p>
             <p className="mt-4 text-sm font-semibold leading-6 text-on-surface-variant">
               Final pricing depends on state availability, data needs, and compliance requirements. This gives you a serious planning number before a sales call.
@@ -660,140 +768,293 @@ function Pricing() {
               ))}
             </div>
 
-            {currentStep === 1 && (
+            {configError && (
+              <p className="mb-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
+                Pricing service unavailable: {configError}
+              </p>
+            )}
+
+            {!config && !configError && (
+              <p className="mb-4 rounded-md bg-surface-container-low p-3 text-sm font-semibold text-on-surface-variant">
+                Loading pricing options…
+              </p>
+            )}
+
+            {config && currentStep === 1 && (
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm font-extrabold uppercase text-primary">Step 1 · Campaign size</p>
+                  <p className="text-sm font-extrabold uppercase text-primary">Step 1 · Race</p>
                   <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-                    Start with the size of the race. We will tighten the estimate from there.
+                    Pick the state and race. We will use it to size the estimate.
                   </p>
                 </div>
-                <div className="grid gap-3">
-                  {campaignOptions.map((option) => (
-                    <button
-                      type="button"
-                      key={option.id}
-                      onClick={() => setCampaignId(option.id)}
-                      className="rounded-md border border-outline-variant bg-white p-4 text-left transition hover:border-accent hover:shadow-sm"
-                    >
-                      <span className="flex items-center justify-between gap-3">
-                        <span>
+
+                {config.states.length > 1 && (
+                  <div>
+                    <span className="mb-2 block text-sm font-bold text-primary">State</span>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {config.states.map((option) => (
+                        <button
+                          type="button"
+                          key={option.code}
+                          onClick={() => {
+                            setStateCode(option.code);
+                            setRaceId(null);
+                          }}
+                          className={`rounded-md border bg-white p-4 text-left transition hover:border-accent hover:shadow-sm ${
+                            stateCode === option.code ? 'border-accent shadow-sm' : 'border-outline-variant'
+                          }`}
+                        >
                           <span className="block font-display text-xl font-extrabold text-primary">{option.label}</span>
-                          <span className="mt-1 block text-sm leading-6 text-on-surface-variant">{option.description}</span>
-                        </span>
-                        <ArrowRight className="shrink-0 text-accent" size={18} />
-                      </span>
-                    </button>
-                  ))}
-                </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {stateCode && (
+                  <div>
+                    <span className="mb-2 block text-sm font-bold text-primary">Race</span>
+                    <div className="rounded-md border border-outline-variant bg-white p-4">
+                      <select
+                        value={raceId ?? ''}
+                        onChange={(event) => setRaceId(event.target.value || null)}
+                        className="w-full bg-white text-base font-bold text-primary outline-none"
+                      >
+                        <option value="" disabled>
+                          Select a race…
+                        </option>
+                        {config.races.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {currentStep === 2 && selectedCampaign && (
+            {config && currentStep === 2 && selectedState && selectedRace && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm font-extrabold uppercase text-primary">Step 2 · Your role</p>
+                    <p className="text-sm font-extrabold uppercase text-primary">Step 2 · Term and tier</p>
                     <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-                      Campaign size selected: <span className="font-bold text-primary">{selectedCampaign.label}</span>
+                      <span className="font-bold text-primary">{selectedState.label}</span> · <span className="font-bold text-primary">{selectedRace.label}</span>
                     </p>
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setCampaignId(null);
-                      setRole(null);
-                      setStatus('idle');
-                    }}
+                    onClick={() => resetTo(1)}
                     className="text-sm font-bold text-accent"
                   >
                     Back
                   </button>
                 </div>
-                <div className="grid gap-3">
-                  {roleOptions.map((option) => (
-                    <button
-                      type="button"
-                      key={option.id}
-                      onClick={() => setRole(option.id)}
-                      className="flex items-center justify-between rounded-md border border-outline-variant bg-white px-4 py-4 text-left text-sm font-bold text-primary transition hover:border-accent hover:shadow-sm"
-                    >
-                      <span>{option.label}</span>
-                      <ArrowRight className="shrink-0 text-accent" size={18} />
-                    </button>
-                  ))}
+
+                <div>
+                  <span className="mb-2 block text-sm font-bold text-primary">Term length</span>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {config.terms.map((option) => (
+                      <button
+                        type="button"
+                        key={option.id}
+                        onClick={() => setTermId(option.id)}
+                        className={`rounded-md border bg-white p-4 text-left transition hover:border-accent hover:shadow-sm ${
+                          termId === option.id ? 'border-accent shadow-sm' : 'border-outline-variant'
+                        }`}
+                      >
+                        <span className="block font-display text-lg font-extrabold text-primary">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {termId && (
+                  <div>
+                    <span className="mb-2 block text-sm font-bold text-primary">Tier</span>
+                    <div className="grid gap-3">
+                      {config.tiers.map((option) => (
+                        <button
+                          type="button"
+                          key={option}
+                          onClick={() => setTier(option)}
+                          className={`rounded-md border bg-white p-4 text-left transition hover:border-accent hover:shadow-sm ${
+                            tier === option ? 'border-accent shadow-sm' : 'border-outline-variant'
+                          }`}
+                        >
+                          <span className="flex items-center justify-between gap-3">
+                            <span>
+                              <span className="block font-display text-xl font-extrabold text-primary">{option}</span>
+                              <span className="mt-1 block text-sm leading-6 text-on-surface-variant">{tierDescriptions[option]}</span>
+                            </span>
+                            <ArrowRight className="shrink-0 text-accent" size={18} />
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {currentStep === 3 && selectedCampaign && role && monthlyTotal !== null && (
+            {config && currentStep === 3 && (
               <div className="space-y-5">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-sm font-extrabold uppercase text-primary">Step 3 · Send the estimate</p>
                     <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-                      <span className="font-bold text-primary">{selectedCampaign.label}</span> · {roleOptions.find((option) => option.id === role)?.label}
+                      <span className="font-bold text-primary">{selectedState?.label}</span> · {selectedRace?.label} · {selectedTerm?.label} · {tier}
                     </p>
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setRole(null);
-                      setStatus('idle');
-                    }}
+                    onClick={() => resetTo(2)}
                     className="text-sm font-bold text-accent"
                   >
                     Back
                   </button>
                 </div>
 
-                <div className="rounded-lg bg-primary p-5 text-white">
-                  <p className="text-sm font-bold uppercase text-secondary-container">Estimated platform price</p>
-                  <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <p className="font-display text-5xl font-extrabold">{formatPrice(monthlyTotal)}</p>
-                      <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
-                    </div>
+                {resultStatus === 'loading' && (
+                  <div className="rounded-lg border border-outline-variant bg-surface-container-low p-5 text-sm font-semibold text-on-surface-variant">
+                    Calculating your estimate…
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-on-primary-container">
-                    Includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.
-                  </p>
-                </div>
+                )}
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label>
-                    <span className="mb-2 block text-sm font-bold text-primary">Name</span>
-                    <input
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
-                      required
-                      className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-                      placeholder="Jane Organizer"
-                      type="text"
-                    />
-                  </label>
+                {resultStatus === 'error' && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-700">
+                    Could not load pricing. Please go back and try again.
+                  </div>
+                )}
 
-                  <label>
-                    <span className="mb-2 block text-sm font-bold text-primary">Email</span>
-                    <input
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      required
-                      className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-                      placeholder="jane@campaign.org"
-                      type="email"
-                    />
-                  </label>
-                </div>
+                {result && resultStatus === 'idle' && (
+                  <>
+                    <div className="rounded-lg bg-primary p-5 text-white">
+                      <p className="text-sm font-bold uppercase text-secondary-container">Estimated platform price</p>
+                      <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                          <p className="font-display text-5xl font-extrabold">{formatMoney(result.monthlyTotal)}</p>
+                          <p className="text-sm font-semibold text-on-primary-container">per month during the campaign</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-bold uppercase text-secondary-container">Order total</p>
+                          <p className="font-display text-2xl font-extrabold">{formatMoney(result.orderTotal)}</p>
+                          <p className="text-xs font-semibold text-on-primary-container">over {result.cycleMonths} months</p>
+                        </div>
+                      </div>
+                      <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                        <div>
+                          <dt className="text-xs font-bold uppercase text-secondary-container">List price</dt>
+                          <dd className="font-display text-lg font-extrabold">{formatMoney(result.monthly)}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-xs font-bold uppercase text-secondary-container">Term discount</dt>
+                          <dd className="font-display text-lg font-extrabold">{(result.discountPct * 100).toFixed(0)}%</dd>
+                        </div>
+                        <div>
+                          <dt className="text-xs font-bold uppercase text-secondary-container">Voter bucket</dt>
+                          <dd className="font-display text-lg font-extrabold">{result.voterBucket}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-xs font-bold uppercase text-secondary-container">Voters</dt>
+                          <dd className="font-display text-lg font-extrabold">{formatVoters(result.voters)}</dd>
+                        </div>
+                      </dl>
+                    </div>
 
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 font-bold text-white transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
-                  <ArrowRight size={18} />
-                </button>
+                    <div className="rounded-lg border border-outline-variant bg-white p-5">
+                      <p className="text-sm font-extrabold uppercase text-accent">Estimated savings vs legacy tools</p>
+                      <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+                        Replaces NGP VAN voter file, a relational organizing tool, and a separate canvasser suite.
+                      </p>
+                      <div className="mt-4 overflow-hidden rounded-md border border-outline-variant">
+                        <div className="grid grid-cols-[1fr_6rem_7rem] items-center gap-3 border-b border-outline-variant bg-surface-container-low px-4 py-2 text-xs font-extrabold uppercase tracking-wide text-on-surface-variant sm:grid-cols-[1fr_8rem_9rem]">
+                          <span>Tool replaced</span>
+                          <span className="text-right">Monthly</span>
+                          <span className="text-right">Across cycle</span>
+                        </div>
+                        {(
+                          [
+                            ['Voter file (NGP VAN)', result.savings.voterFile],
+                            ['Relational organizing', result.savings.relationalOrganizing],
+                            ['Canvasser suite', result.savings.canvasserSuit],
+                          ] as const
+                        ).map(([label, row]) => (
+                          <div
+                            key={label}
+                            className="grid grid-cols-[1fr_6rem_7rem] items-center gap-3 border-b border-outline-variant px-4 py-2 text-sm last:border-b-0 sm:grid-cols-[1fr_8rem_9rem]"
+                          >
+                            <span className="font-semibold text-primary">{label}</span>
+                            <span className="text-right font-bold text-primary">{formatMoney(row.monthly)}</span>
+                            <span className="text-right font-bold text-primary">{formatMoney(row.cycle)}</span>
+                          </div>
+                        ))}
+                        <div className="grid grid-cols-[1fr_6rem_7rem] items-center gap-3 bg-secondary-container/30 px-4 py-3 text-sm sm:grid-cols-[1fr_8rem_9rem]">
+                          <span className="font-display text-base font-extrabold text-primary">You save</span>
+                          <span className="text-right font-display text-base font-extrabold text-primary">{formatMoney(result.savings.totalMonthly)}</span>
+                          <span className="text-right font-display text-base font-extrabold text-primary">{formatMoney(result.savings.totalCycle)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label>
+                        <span className="mb-2 block text-sm font-bold text-primary">Name</span>
+                        <input
+                          value={name}
+                          onChange={(event) => setName(event.target.value)}
+                          required
+                          className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                          placeholder="Jane Organizer"
+                          type="text"
+                        />
+                      </label>
+
+                      <label>
+                        <span className="mb-2 block text-sm font-bold text-primary">Email</span>
+                        <input
+                          value={email}
+                          onChange={(event) => setEmail(event.target.value)}
+                          required
+                          className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                          placeholder="jane@campaign.org"
+                          type="email"
+                        />
+                      </label>
+                    </div>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-primary">Your role</span>
+                      <select
+                        value={role ?? ''}
+                        onChange={(event) => setRole(event.target.value || null)}
+                        required
+                        className="w-full rounded-md border border-outline-variant bg-white px-4 py-3 text-base font-bold text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                      >
+                        <option value="" disabled>
+                          Select your role…
+                        </option>
+                        {roleOptions.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <button
+                      type="submit"
+                      disabled={status === 'loading' || !role}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 font-bold text-white transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {status === 'loading' ? 'Sending estimate...' : 'Email my estimate'}
+                      <ArrowRight size={18} />
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
