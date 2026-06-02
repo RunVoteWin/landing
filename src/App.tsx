@@ -79,6 +79,7 @@ const navItems = [
   { label: 'Proof', href: '/#proof' },
   { label: 'Pricing', href: '/#pricing' },
   { label: 'Integrations', href: '/#integrations' },
+  { label: 'Careers', href: '/#careers' },
   { label: 'Compare', href: '/#compare' },
 ];
 
@@ -214,6 +215,29 @@ const plannedFeatures = [
   'React Native contact-import app for iOS and Android',
   'Deeper reporting, targeting, and voter-universe tools',
   'More integrations and more supported states',
+];
+
+const careers = [
+  {
+    title: 'Data Scientist',
+    description:
+      'Build the models, analytics, and geospatial insights campaigns use to make sharper field decisions. Strong linear algebra required; cartography or campaign data experience is a bonus.',
+  },
+  {
+    title: 'Database Engineer',
+    description:
+      'Own the data layer behind modern campaign operations. Must have PostgreSQL experience and be comfortable working in TypeScript.',
+  },
+  {
+    title: 'Software Sales',
+    description:
+      'Help campaigns understand what better tooling makes possible. You should be a pro at working on campaigns and know how campaign teams buy, decide, and move.',
+  },
+  {
+    title: 'Open Role',
+    description:
+      'Do not see the exact fit? Send a resume and a note about how you want to help Democrats win.',
+  },
 ];
 
 function formatPrice(value: number) {
@@ -1271,6 +1295,54 @@ function States() {
   );
 }
 
+function Careers() {
+  return (
+    <section id="careers" className="bg-white py-16 md:py-20">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="grid gap-10 lg:grid-cols-[0.82fr_1fr] lg:items-start">
+          <div>
+            <p className="mb-4 text-sm font-extrabold uppercase text-accent">Careers</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+              Help build the campaign platform Democrats deserve.
+            </h2>
+            <div className="mt-6 space-y-4 text-lg leading-8 text-on-surface-variant">
+              <p>
+                RunVoteWin was founded because Democratic campaigns should not have to choose between clunky incumbent software and duct-taped spreadsheets. We are building a modern field platform for teams that need to move fast, know their voters, and spend every dollar more effectively.
+              </p>
+              <p>
+                Our goal is simple: help Democrats win overwhelmingly with no compromises. We are a scrappy startup, not an incumbent, and we are looking for people who want to ship, learn, and fight for better campaign infrastructure.
+              </p>
+              <p className="font-extrabold text-primary">All roles are remote. Applicants must be American.</p>
+            </div>
+            <a
+              href="mailto:recruiter@runvotewin.com"
+              className="mt-7 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container"
+            >
+              Email recruiter@runvotewin.com
+              <ArrowRight size={20} />
+            </a>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {careers.map((role) => (
+              <article key={role.title} className="rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
+                <h3 className="font-display text-2xl font-extrabold text-primary">{role.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-on-surface-variant">{role.description}</p>
+                <a
+                  href={`mailto:recruiter@runvotewin.com?subject=${encodeURIComponent(`RunVoteWin ${role.title} application`)}`}
+                  className="mt-5 inline-flex text-sm font-extrabold text-accent transition hover:text-primary"
+                >
+                  Apply by email →
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FinalCTA() {
   return (
     <section className="bg-hero py-16 md:py-20">
@@ -1522,6 +1594,7 @@ export default function App() {
           <Comparison />
           <Ownership />
           <States />
+          <Careers />
           <FinalCTA />
         </main>
       )}
