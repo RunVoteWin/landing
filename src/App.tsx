@@ -1,5 +1,9 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
+import { calculatePricing, PricingError } from '../api/_lib/pricing/calculate.ts';
+import { races, terms, tiers } from '../api/_lib/pricing/shared.ts';
+import { listStates } from '../api/_lib/pricing/states/index.ts';
+import type { PricingInput } from '../api/_lib/pricing/types.ts';
 import {
   ArrowRight,
   Award,
@@ -64,6 +68,13 @@ type PricingResult = {
     totalMonthly: number;
     totalCycle: number;
   };
+};
+
+type PricingSelection = {
+  state: string;
+  race: string;
+  term: string;
+  tier: PricingTier;
 };
 
 type Integration = {
@@ -217,6 +228,13 @@ const plannedFeatures = [
   'More integrations and more supported states',
 ];
 
+const localPricingConfig: PricingConfig = {
+  states: listStates(),
+  races: races.map(({ id, label }) => ({ id, label })),
+  terms: terms.map(({ id, label }) => ({ id, label })),
+  tiers: [...tiers],
+};
+
 const careers = [
   {
     title: 'Data Scientist',
@@ -275,6 +293,34 @@ function postLead(payload: Record<string, unknown>) {
       page: window.location.href,
     }),
   });
+}
+
+async function fetchPricingJson<T>(url: string, init: RequestInit | undefined, label: string): Promise<T> {
+  const response = await fetch(url, {
+    credentials: 'same-origin',
+    ...init,
+  });
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (!response.ok) {
+    throw new Error(`${label} failed: ${response.status}`);
+  }
+  if (!contentType.includes('application/json')) {
+    throw new Error(`${label} returned ${contentType || 'an unknown content type'}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+function calculatePricingFallback(selection: PricingSelection): PricingResult {
+  try {
+    return calculatePricing(selection as PricingInput);
+  } catch (error) {
+    if (error instanceof PricingError) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
 }
 
 function SignupForm({ variant }: { variant: SignupFormVariant }) {
@@ -627,14 +673,12 @@ function Pricing() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/pricing/config')
-      .then((res) => {
-        if (!res.ok) throw new Error(`Config fetch failed: ${res.status}`);
-        return res.json();
-      })
-      .then((data: PricingConfig) => {
+    fetchPricingJson<PricingConfig>('/api/pricing/config', undefined, 'Pricing config')
+      .catch(() => localPricingConfig)
+      .then((data) => {
         if (cancelled) return;
         setConfig(data);
+        setConfigError(null);
         if (data.states.length === 1) setStateCode(data.states[0]!.code);
       })
       .catch((err: Error) => {
@@ -649,19 +693,14 @@ function Pricing() {
     if (!stateCode || !raceId || !termId || !tier) return;
     let cancelled = false;
     setResultStatus('loading');
-    fetch('/api/pricing/calculate', {
+    const selection = { state: stateCode, race: raceId, term: termId, tier };
+    fetchPricingJson<PricingResult>('/api/pricing/calculate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ state: stateCode, race: raceId, term: termId, tier }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body?.error ?? `Calculate failed: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data: PricingResult) => {
+      body: JSON.stringify(selection),
+    }, 'Pricing calculation')
+      .catch(() => calculatePricingFallback(selection))
+      .then((data) => {
         if (cancelled) return;
         setResult(data);
         setResultStatus('idle');

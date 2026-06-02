@@ -6,8 +6,8 @@ export default function handler(req: { method?: string }, res: {
   status: (code: number) => { json: (body: unknown) => void; end: () => void };
   setHeader: (name: string, value: string) => void;
 }) {
-  if (req.method && req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
+  if (req.method && !['GET', 'HEAD'].includes(req.method)) {
+    res.setHeader('Allow', 'GET, HEAD');
     res.status(405).end();
     return;
   }
@@ -20,5 +20,10 @@ export default function handler(req: { method?: string }, res: {
   };
 
   res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300');
+  if (req.method === 'HEAD') {
+    res.status(200).end();
+    return;
+  }
+
   res.status(200).json(body);
 }
