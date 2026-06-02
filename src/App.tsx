@@ -52,7 +52,6 @@ const navItems = [
   { label: 'Proof', href: '/#proof' },
   { label: 'Pricing', href: '/#pricing' },
   { label: 'Integrations', href: '/#integrations' },
-  { label: 'Careers', href: '/#careers' },
   { label: 'Compare', href: '/#compare' },
 ];
 
@@ -231,6 +230,140 @@ const careers = [
     title: 'Open Role',
     description:
       'Do not see the exact fit? Send a resume and a note about how you want to help Democrats win.',
+  },
+];
+
+type LegalSection = {
+  title: string;
+  paragraphs: string[];
+  bullets?: string[];
+};
+
+const footerLinks = [
+  { label: 'Careers', href: '/#careers' },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
+  { label: 'Terms of Service', href: '/terms-of-service' },
+  { label: 'Docs', href: docsUrl },
+];
+
+const privacySections: LegalSection[] = [
+  {
+    title: 'Information We Collect',
+    paragraphs: [
+      'We collect information you provide directly, including name, email address, campaign role, campaign organization, pricing-estimator inputs, support messages, and information submitted through forms on the website or app.',
+      'When a campaign uses RunVoteWin, users may import or connect campaign data such as voter files, contact records, supporter lists, volunteer data, canvassing history, tags, notes, turf assignments, and integration data from services the campaign authorizes.',
+      'We also collect limited technical information, including device, browser, log, usage, security, and diagnostic data needed to operate, secure, improve, and troubleshoot the service.',
+    ],
+  },
+  {
+    title: 'How We Use Information',
+    paragraphs: [
+      'We use information to provide RunVoteWin, respond to inquiries, prepare pricing estimates, support campaigns, operate integrations, improve product reliability, prevent abuse, and communicate about product updates or account matters.',
+      'We may use aggregated or de-identified information to understand product performance and improve campaign workflows. We do not use campaign data to support opposing campaigns.',
+    ],
+  },
+  {
+    title: 'How We Share Information',
+    paragraphs: [
+      'We share information with service providers that help us host, secure, maintain, analyze, support, or improve RunVoteWin. These may include cloud hosting providers, email and messaging tools, payment processors, analytics providers, spreadsheet automation, and integration partners selected by the campaign.',
+      'We may disclose information if required by law, legal process, security needs, or to protect the rights, safety, or integrity of RunVoteWin, our users, campaigns, or the public.',
+      'We do not sell personal information. We do not provide campaign data to foreign private equity owners, opposing campaigns, or unrelated political organizations for their independent use.',
+    ],
+  },
+  {
+    title: 'Campaign Data',
+    paragraphs: [
+      'Campaigns remain responsible for the accuracy, legality, permissions, and compliance obligations tied to the data they upload, connect, export, or use through RunVoteWin.',
+      'We process campaign data to provide the service and as instructed by the campaign or authorized users. Campaigns should not upload data they are not authorized to use.',
+    ],
+  },
+  {
+    title: 'Security and Retention',
+    paragraphs: [
+      'We use administrative, technical, and organizational safeguards designed to protect information. No online service can guarantee absolute security, but campaign data security is a core operating requirement for RunVoteWin.',
+      'We retain information for as long as needed to provide the service, comply with legal obligations, resolve disputes, enforce agreements, maintain security, and support campaign continuity unless deletion is requested and legally permissible.',
+    ],
+  },
+  {
+    title: 'Your Choices',
+    paragraphs: [
+      'You may request access, correction, deletion, or export of personal information by contacting us. Some requests may require verification and may be limited by legal, security, campaign-record, or operational requirements.',
+      'You can unsubscribe from non-transactional emails using the instructions in those messages or by contacting us.',
+    ],
+  },
+  {
+    title: 'Contact',
+    paragraphs: [
+      'Questions about this Privacy Policy can be sent to privacy@runvotewin.com.',
+      'This Privacy Policy is intended as a practical starting point and should be reviewed by counsel before being relied on for regulated campaign, consumer privacy, employment, or state-specific compliance needs.',
+    ],
+  },
+];
+
+const termsSections: LegalSection[] = [
+  {
+    title: 'Who May Use RunVoteWin',
+    paragraphs: [
+      'RunVoteWin is built for Democratic Party campaigns, Democratic-aligned political organizations, consultants, staff, and authorized campaign users. By using the service, you represent that you are authorized to use it on behalf of the campaign, committee, organization, or entity you identify.',
+      'We may decline, suspend, or terminate access for users or organizations that do not fit RunVoteWin eligibility, violate these terms, create security risk, misuse data, or use the service in a way that harms RunVoteWin, campaigns, voters, volunteers, or the public.',
+    ],
+  },
+  {
+    title: 'Accounts and Authorized Users',
+    paragraphs: [
+      'You are responsible for safeguarding account credentials, managing authorized users, and promptly notifying us of suspected unauthorized access. Campaign administrators are responsible for the actions of users they invite or authorize.',
+      'You may not share accounts, impersonate others, bypass access controls, or use RunVoteWin after your authorization ends.',
+    ],
+  },
+  {
+    title: 'Campaign Data and Compliance',
+    paragraphs: [
+      'Campaigns own and control the campaign data they upload, import, connect, or create through RunVoteWin. You grant RunVoteWin the rights needed to host, process, transmit, display, analyze, support, and secure that data to provide the service.',
+      'You are responsible for complying with election law, campaign finance rules, voter-file agreements, data-use restrictions, privacy law, telemarketing and texting rules, email rules, platform terms, and all other obligations that apply to your campaign or organization.',
+      'RunVoteWin is campaign software, not legal, compliance, accounting, security, or campaign-finance advice.',
+    ],
+  },
+  {
+    title: 'Acceptable Use',
+    paragraphs: [
+      'You may not use RunVoteWin to break the law, misuse voter or supporter data, harass people, send unlawful messages, interfere with elections, attack systems, scrape the service, reverse engineer non-public software, overload infrastructure, or violate third-party rights.',
+      'You may not upload malware, unauthorized data, or content that infringes rights or creates legal, security, or operational risk.',
+    ],
+  },
+  {
+    title: 'Integrations and Third-Party Services',
+    paragraphs: [
+      'RunVoteWin may connect with third-party services such as voter-file systems, spreadsheets, event platforms, fundraising tools, texting tools, payment processors, and cloud providers. Third-party services are governed by their own terms and privacy policies.',
+      'You are responsible for authorizing integrations and confirming that your use of imported or exported data complies with all applicable agreements and laws.',
+    ],
+  },
+  {
+    title: 'Payment, Trials, and Changes',
+    paragraphs: [
+      'Pricing, subscription terms, lifetime offers, discounts, taxes, and payment timing may be described on the website, in an order form, or in a separate written agreement. If there is a conflict, the signed order form or written agreement controls.',
+      'We may update product features, pricing, availability, and supported states over time. We will not materially reduce paid access without notice unless required for security, legal, or abuse-prevention reasons.',
+    ],
+  },
+  {
+    title: 'Availability and Disclaimers',
+    paragraphs: [
+      'We work to keep RunVoteWin reliable, but the service is provided as available and may be interrupted by maintenance, outages, integrations, internet providers, emergencies, or events outside our control.',
+      'Except where a separate written agreement says otherwise, RunVoteWin is provided without warranties of merchantability, fitness for a particular purpose, non-infringement, or uninterrupted operation.',
+    ],
+  },
+  {
+    title: 'Liability',
+    paragraphs: [
+      'To the maximum extent permitted by law, RunVoteWin and Solarpunk LLC will not be liable for indirect, incidental, special, consequential, exemplary, or punitive damages, including lost profits, lost votes, lost goodwill, lost data, or campaign outcomes.',
+      'Except where prohibited by law or a separate written agreement, our total liability is limited to the amount paid for the service in the three months before the claim.',
+    ],
+  },
+  {
+    title: 'Governing Law and Contact',
+    paragraphs: [
+      'These terms are governed by the laws of the Commonwealth of Virginia, excluding conflict-of-law rules, unless a separate written agreement says otherwise.',
+      'Questions about these Terms of Service can be sent to support@runvotewin.com. These terms are a practical starting point and should be reviewed by counsel before being relied on for campaign, procurement, privacy, or state-specific legal needs.',
+    ],
   },
 ];
 
@@ -1286,6 +1419,73 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   );
 }
 
+function LegalPage({
+  eyebrow,
+  title,
+  intro,
+  sections,
+}: {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  sections: LegalSection[];
+}) {
+  return (
+    <main className="bg-surface pt-36 text-primary md:pt-40">
+      <section className="mx-auto max-w-4xl px-5 pb-20 md:px-8">
+        <p className="mb-4 text-sm font-extrabold uppercase text-accent">{eyebrow}</p>
+        <h1 className="font-display text-5xl font-extrabold tracking-tight md:text-6xl">{title}</h1>
+        <p className="mt-4 text-sm font-semibold text-on-surface-variant">Last updated: June 2, 2026</p>
+        <p className="mt-8 text-lg leading-8 text-on-surface-variant">{intro}</p>
+
+        <div className="mt-10 space-y-8">
+          {sections.map((section) => (
+            <article key={section.title} className="border-t border-outline-variant pt-8">
+              <h2 className="font-display text-3xl font-extrabold text-primary">{section.title}</h2>
+              <div className="mt-4 space-y-4">
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph} className="leading-7 text-on-surface-variant">
+                    {paragraph}
+                  </p>
+                ))}
+                {section.bullets && (
+                  <ul className="list-disc space-y-2 pl-5 leading-7 text-on-surface-variant">
+                    {section.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function PrivacyPolicyPage() {
+  return (
+    <LegalPage
+      eyebrow="Privacy Policy"
+      title="How RunVoteWin Handles Data"
+      intro="This Privacy Policy explains how RunVoteWin and Solarpunk LLC collect, use, share, and protect information when people visit the website, request pricing, contact us, or use the RunVoteWin campaign software."
+      sections={privacySections}
+    />
+  );
+}
+
+function TermsOfServicePage() {
+  return (
+    <LegalPage
+      eyebrow="Terms of Service"
+      title="Rules for Using RunVoteWin"
+      intro="These Terms of Service govern access to the RunVoteWin website, app, pricing estimator, integrations, and related campaign software unless a signed agreement with Solarpunk LLC says otherwise."
+      sections={termsSections}
+    />
+  );
+}
+
 function Footer() {
   return (
     <footer className="bg-primary py-12 text-white">
@@ -1297,17 +1497,16 @@ function Footer() {
           <div>
             <p className="font-display text-2xl font-extrabold">RunVoteWin</p>
             <p className="text-sm text-on-primary-container">Fast, reliable voter-contact software for winning Democratic campaigns.</p>
-            <p className="mt-2 text-xs font-medium text-white/55">Made with 💪 in Virginia and Texas. | © 2026 Solarpunk LLC.</p>
+            <p className="mt-2 text-xs font-medium text-white/55">© 2026 Solarpunk LLC.</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-5 text-sm font-semibold text-on-primary-container">
-          <a href={docsUrl} className="transition hover:text-white">
-            Docs
-          </a>
-          <span>Made in America</span>
-          <span>American-owned</span>
-          <span>Built to win</span>
+          {footerLinks.map((link) => (
+            <a key={link.href} href={link.href} className="transition hover:text-white">
+              {link.label}
+            </a>
+          ))}
         </div>
       </div>
     </footer>
@@ -1315,12 +1514,19 @@ function Footer() {
 }
 
 export default function App() {
-  const isWinForLifePage = window.location.pathname === '/win-for-life';
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const isWinForLifePage = path === '/win-for-life';
+  const isPrivacyPolicyPage = path === '/privacy-policy' || path === '/privacy';
+  const isTermsOfServicePage = path === '/terms-of-service' || path === '/terms';
 
   return (
     <div className="min-h-screen bg-surface">
       <Navbar />
-      {isWinForLifePage ? (
+      {isPrivacyPolicyPage ? (
+        <PrivacyPolicyPage />
+      ) : isTermsOfServicePage ? (
+        <TermsOfServicePage />
+      ) : isWinForLifePage ? (
         <WinForLifePage />
       ) : (
         <main>
