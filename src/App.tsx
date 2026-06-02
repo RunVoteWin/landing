@@ -240,7 +240,7 @@ type LegalSection = {
 };
 
 const footerLinks = [
-  { label: 'Careers', href: '/#careers' },
+  { label: 'Careers', href: '/careers' },
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms of Service', href: '/terms-of-service' },
   { label: 'Docs', href: docsUrl },
@@ -1167,39 +1167,71 @@ function States() {
   );
 }
 
-function Careers() {
+function CareersPage() {
   return (
-    <section id="careers" className="bg-white py-16 md:py-20">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="grid gap-10 lg:grid-cols-[0.82fr_1fr] lg:items-start">
-          <div>
+    <main className="bg-surface pt-36 text-primary md:pt-40">
+      <section className="bg-hero pb-16 md:pb-20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.86fr_1fr] lg:items-center">
+          <div className="max-w-3xl">
             <p className="mb-4 text-sm font-extrabold uppercase text-accent">Careers</p>
-            <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-              Help build the campaign platform Democrats deserve.
-            </h2>
-            <div className="mt-6 space-y-4 text-lg leading-8 text-on-surface-variant">
-              <p>
-                RunVoteWin was founded because Democratic campaigns should not have to choose between clunky incumbent software and duct-taped spreadsheets. We are building a modern field platform for teams that need to move fast, know their voters, and spend every dollar more effectively.
-              </p>
-              <p>
-                Our goal is simple: help Democrats win overwhelmingly with no compromises. We are a scrappy startup, not an incumbent, and we are looking for people who want to ship, learn, and fight for better campaign infrastructure.
-              </p>
-              <p className="font-extrabold text-primary">All roles are remote. Applicants must be American.</p>
+            <h1 className="font-display text-5xl font-extrabold tracking-tight md:text-7xl">
+              Build campaign software that helps Democrats win.
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-on-surface-variant md:text-xl">
+              RunVoteWin is building modern field infrastructure for serious Democratic campaigns. We are looking for people who understand that campaign software is operational software: it has to be fast, clear, and reliable under pressure.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {['Remote roles', 'American applicants only', 'Campaign-aligned team'].map((item) => (
+                <span key={item} className="rounded-full bg-white/92 px-4 py-2 text-sm font-extrabold text-primary shadow-sm">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-outline-variant bg-white/92 p-7 shadow-xl md:p-9">
+            <p className="font-display text-3xl font-extrabold text-primary">What we care about</p>
+            <div className="mt-6 grid gap-4">
+              {[
+                'Shipping useful product for real campaign teams',
+                'Treating voter and campaign data like critical infrastructure',
+                'Replacing brittle legacy workflows with software people actually like using',
+                'Building with urgency without making sloppy technical decisions',
+              ].map((item) => (
+                <div key={item} className="flex gap-3 rounded-md bg-surface p-4">
+                  <CheckCircle2 className="mt-0.5 shrink-0 text-accent" size={20} />
+                  <p className="font-semibold leading-6 text-primary">{item}</p>
+                </div>
+              ))}
             </div>
             <a
               href="mailto:recruiter@runvotewin.com"
-              className="mt-7 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container"
+              className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container"
             >
               Email recruiter@runvotewin.com
               <ArrowRight size={20} />
             </a>
           </div>
+        </div>
+      </section>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+      <section className="bg-white py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="max-w-3xl">
+            <p className="mb-4 text-sm font-extrabold uppercase text-accent">Open roles</p>
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
+              Join a small team building for high-stakes field operations.
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-on-surface-variant">
+              We are early, practical, and focused. If you can make campaigns faster, cleaner, or more effective, we want to hear from you.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
             {careers.map((role) => (
-              <article key={role.title} className="rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
+              <article key={role.title} className="flex h-full flex-col rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
                 <h3 className="font-display text-2xl font-extrabold text-primary">{role.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-on-surface-variant">{role.description}</p>
+                <p className="mt-3 flex-1 text-sm leading-6 text-on-surface-variant">{role.description}</p>
                 <a
                   href={`mailto:recruiter@runvotewin.com?subject=${encodeURIComponent(`RunVoteWin ${role.title} application`)}`}
                   className="mt-5 inline-flex text-sm font-extrabold text-accent transition hover:text-primary"
@@ -1210,8 +1242,8 @@ function Careers() {
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
 
@@ -1516,13 +1548,16 @@ function Footer() {
 export default function App() {
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
   const isWinForLifePage = path === '/win-for-life';
+  const isCareersPage = path === '/careers';
   const isPrivacyPolicyPage = path === '/privacy-policy' || path === '/privacy';
   const isTermsOfServicePage = path === '/terms-of-service' || path === '/terms';
 
   return (
     <div className="min-h-screen bg-surface">
       <Navbar />
-      {isPrivacyPolicyPage ? (
+      {isCareersPage ? (
+        <CareersPage />
+      ) : isPrivacyPolicyPage ? (
         <PrivacyPolicyPage />
       ) : isTermsOfServicePage ? (
         <TermsOfServicePage />
@@ -1539,7 +1574,6 @@ export default function App() {
           <Comparison />
           <Ownership />
           <States />
-          <Careers />
           <FinalCTA />
         </main>
       )}
