@@ -9,6 +9,32 @@ const PRICE_BY_CAMPAIGN_SIZE = {
   coordinated: { label: 'Coordinated or IE', price: 2500 },
 };
 
+const LEAD_HEADERS = [
+  'Received At',
+  'Submitted At',
+  'Form Type',
+  'Name',
+  'Email',
+  'Role',
+  'Campaign',
+  'State',
+  'State Label',
+  'Requested State',
+  'Race',
+  'Race Label',
+  'Term',
+  'Term Label',
+  'Tier',
+  'Voters',
+  'Voter Bucket',
+  'Cycle Months',
+  'Estimate Monthly',
+  'Order Total',
+  'Estimate Formatted',
+  'Source',
+  'Page',
+];
+
 function doPost(event) {
   try {
     const payload = parsePayload_(event);
@@ -44,7 +70,7 @@ function parsePayload_(event) {
 
 function normalizeLead_(payload) {
   const campaign = PRICE_BY_CAMPAIGN_SIZE[payload.campaignSize] || null;
-  const estimateMonthly = campaign ? campaign.price : Number(payload.estimateMonthly || 0);
+  const estimateMonthly = Number(payload.estimateMonthly || 0) || (campaign ? campaign.price : 0);
   const campaignSizeLabel = campaign ? campaign.label : String(payload.campaignSizeLabel || '');
 
   return {
@@ -53,10 +79,23 @@ function normalizeLead_(payload) {
     name: String(payload.name || '').trim(),
     email: String(payload.email || '').trim(),
     role: String(payload.role || '').trim(),
+    campaign: String(payload.campaign || '').trim(),
+    state: String(payload.state || '').trim(),
+    stateLabel: String(payload.stateLabel || '').trim(),
+    requestedState: String(payload.requestedState || '').trim(),
+    race: String(payload.race || '').trim(),
+    raceLabel: String(payload.raceLabel || '').trim(),
+    term: String(payload.term || '').trim(),
+    termLabel: String(payload.termLabel || '').trim(),
+    tier: String(payload.tier || '').trim(),
+    voters: Number(payload.voters || 0),
+    voterBucket: String(payload.voterBucket || '').trim(),
+    cycleMonths: Number(payload.cycleMonths || 0),
     campaignSize: String(payload.campaignSize || '').trim(),
     campaignSizeLabel,
     estimateMonthly,
-    estimateFormatted: estimateMonthly ? formatUsd_(estimateMonthly) + '/mo' : '',
+    orderTotal: Number(payload.orderTotal || 0),
+    estimateFormatted: String(payload.estimateFormatted || '').trim() || (estimateMonthly ? formatUsd_(estimateMonthly) + '/mo' : ''),
     source: String(payload.source || '').trim(),
     page: String(payload.page || '').trim(),
   };
@@ -72,9 +111,20 @@ function appendLead_(lead) {
     lead.name,
     lead.email,
     lead.role,
-    lead.campaignSize,
-    lead.campaignSizeLabel,
+    lead.campaign,
+    lead.state,
+    lead.stateLabel,
+    lead.requestedState,
+    lead.race,
+    lead.raceLabel,
+    lead.term,
+    lead.termLabel,
+    lead.tier,
+    lead.voters,
+    lead.voterBucket,
+    lead.cycleMonths,
     lead.estimateMonthly,
+    lead.orderTotal,
     lead.estimateFormatted,
     lead.source,
     lead.page,
@@ -90,20 +140,16 @@ function getLeadSheet_() {
   }
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'Received At',
-      'Submitted At',
-      'Form Type',
-      'Name',
-      'Email',
-      'Role',
-      'Campaign Size',
-      'Campaign Size Label',
-      'Estimate Monthly',
-      'Estimate Formatted',
-      'Source',
-      'Page',
-    ]);
+    sheet.appendRow(LEAD_HEADERS);
+  } else {
+    const currentHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const needsHeaderUpdate = LEAD_HEADERS.some(function (header, index) {
+      return currentHeaders[index] !== header;
+    });
+
+    if (needsHeaderUpdate) {
+      sheet.getRange(1, 1, 1, LEAD_HEADERS.length).setValues([LEAD_HEADERS]);
+    }
   }
 
   return sheet;
@@ -137,7 +183,10 @@ function sendLeadEmail_(lead) {
       'Thanks for taking a look at RunVoteWin.',
       '',
       'Estimated platform price: ' + lead.estimateFormatted,
-      'Campaign size: ' + lead.campaignSizeLabel,
+      'State: ' + (lead.stateLabel || lead.state),
+      'Race: ' + lead.raceLabel,
+      'Term: ' + lead.termLabel,
+      'Tier: ' + lead.tier,
       '',
       'This estimate includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.',
       'Final pricing can vary based on state availability, data needs, and compliance requirements.',
@@ -152,8 +201,17 @@ function sendLeadEmail_(lead) {
       '<p style="font-size:24px;font-weight:700;">',
       escapeHtml_(lead.estimateFormatted),
       '</p>',
-      '<p><strong>Campaign size:</strong> ',
-      escapeHtml_(lead.campaignSizeLabel),
+      '<p><strong>State:</strong> ',
+      escapeHtml_(lead.stateLabel || lead.state),
+      '</p>',
+      '<p><strong>Race:</strong> ',
+      escapeHtml_(lead.raceLabel),
+      '</p>',
+      '<p><strong>Term:</strong> ',
+      escapeHtml_(lead.termLabel),
+      '</p>',
+      '<p><strong>Tier:</strong> ',
+      escapeHtml_(lead.tier),
       '</p>',
       '<p>This estimate includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.</p>',
       '<p>Final pricing can vary based on state availability, data needs, and compliance requirements.</p>',
@@ -174,7 +232,13 @@ function sendTeamNotification_(lead) {
       'Name: ' + lead.name,
       'Email: ' + lead.email,
       'Role: ' + lead.role,
-      'Campaign size: ' + lead.campaignSizeLabel,
+      'Campaign: ' + lead.campaign,
+      'State: ' + (lead.stateLabel || lead.state),
+      'Requested state: ' + lead.requestedState,
+      'Race: ' + lead.raceLabel,
+      'Term: ' + lead.termLabel,
+      'Tier: ' + lead.tier,
+      'Voters: ' + lead.voters,
       'Estimate: ' + lead.estimateFormatted,
       'Source: ' + lead.source,
     ].join('\n'),
@@ -187,8 +251,20 @@ function sendTeamNotification_(lead) {
       escapeHtml_(lead.email),
       '</p><p><strong>Role:</strong> ',
       escapeHtml_(lead.role),
-      '</p><p><strong>Campaign size:</strong> ',
-      escapeHtml_(lead.campaignSizeLabel),
+      '</p><p><strong>Campaign:</strong> ',
+      escapeHtml_(lead.campaign),
+      '</p><p><strong>State:</strong> ',
+      escapeHtml_(lead.stateLabel || lead.state),
+      '</p><p><strong>Requested state:</strong> ',
+      escapeHtml_(lead.requestedState),
+      '</p><p><strong>Race:</strong> ',
+      escapeHtml_(lead.raceLabel),
+      '</p><p><strong>Term:</strong> ',
+      escapeHtml_(lead.termLabel),
+      '</p><p><strong>Tier:</strong> ',
+      escapeHtml_(lead.tier),
+      '</p><p><strong>Voters:</strong> ',
+      escapeHtml_(lead.voters),
       '</p><p><strong>Estimate:</strong> ',
       escapeHtml_(lead.estimateFormatted),
       '</p><p><strong>Source:</strong> ',
