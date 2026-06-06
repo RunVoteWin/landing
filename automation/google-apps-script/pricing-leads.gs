@@ -9,6 +9,26 @@ const PRICE_BY_CAMPAIGN_SIZE = {
   coordinated: { label: 'Coordinated or IE', price: 2500 },
 };
 
+const LEAD_HEADERS = [
+  'Received At',
+  'Submitted At',
+  'Form Type',
+  'Name',
+  'Email',
+  'Role',
+  'Campaign',
+  'State',
+  'Requested State',
+  'Timeframe',
+  'Timeframe Label',
+  'Campaign Size',
+  'Campaign Size Label',
+  'Estimate Monthly',
+  'Estimate Formatted',
+  'Source',
+  'Page',
+];
+
 function doPost(event) {
   try {
     const payload = parsePayload_(event);
@@ -44,7 +64,7 @@ function parsePayload_(event) {
 
 function normalizeLead_(payload) {
   const campaign = PRICE_BY_CAMPAIGN_SIZE[payload.campaignSize] || null;
-  const estimateMonthly = campaign ? campaign.price : Number(payload.estimateMonthly || 0);
+  const estimateMonthly = Number(payload.estimateMonthly || 0) || (campaign ? campaign.price : 0);
   const campaignSizeLabel = campaign ? campaign.label : String(payload.campaignSizeLabel || '');
 
   return {
@@ -53,6 +73,11 @@ function normalizeLead_(payload) {
     name: String(payload.name || '').trim(),
     email: String(payload.email || '').trim(),
     role: String(payload.role || '').trim(),
+    campaign: String(payload.campaign || '').trim(),
+    state: String(payload.state || '').trim(),
+    requestedState: String(payload.requestedState || '').trim(),
+    timeframe: String(payload.timeframe || '').trim(),
+    timeframeLabel: String(payload.timeframeLabel || '').trim(),
     campaignSize: String(payload.campaignSize || '').trim(),
     campaignSizeLabel,
     estimateMonthly,
@@ -72,6 +97,11 @@ function appendLead_(lead) {
     lead.name,
     lead.email,
     lead.role,
+    lead.campaign,
+    lead.state,
+    lead.requestedState,
+    lead.timeframe,
+    lead.timeframeLabel,
     lead.campaignSize,
     lead.campaignSizeLabel,
     lead.estimateMonthly,
@@ -90,20 +120,16 @@ function getLeadSheet_() {
   }
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'Received At',
-      'Submitted At',
-      'Form Type',
-      'Name',
-      'Email',
-      'Role',
-      'Campaign Size',
-      'Campaign Size Label',
-      'Estimate Monthly',
-      'Estimate Formatted',
-      'Source',
-      'Page',
-    ]);
+    sheet.appendRow(LEAD_HEADERS);
+  } else {
+    const currentHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const needsHeaderUpdate = LEAD_HEADERS.some(function (header, index) {
+      return currentHeaders[index] !== header;
+    });
+
+    if (needsHeaderUpdate) {
+      sheet.getRange(1, 1, 1, LEAD_HEADERS.length).setValues([LEAD_HEADERS]);
+    }
   }
 
   return sheet;
@@ -138,6 +164,8 @@ function sendLeadEmail_(lead) {
       '',
       'Estimated platform price: ' + lead.estimateFormatted,
       'Campaign size: ' + lead.campaignSizeLabel,
+      'Campaign timeframe: ' + lead.timeframeLabel,
+      'State: ' + lead.state,
       '',
       'This estimate includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.',
       'Final pricing can vary based on state availability, data needs, and compliance requirements.',
@@ -154,6 +182,12 @@ function sendLeadEmail_(lead) {
       '</p>',
       '<p><strong>Campaign size:</strong> ',
       escapeHtml_(lead.campaignSizeLabel),
+      '</p>',
+      '<p><strong>Campaign timeframe:</strong> ',
+      escapeHtml_(lead.timeframeLabel),
+      '</p>',
+      '<p><strong>State:</strong> ',
+      escapeHtml_(lead.state),
       '</p>',
       '<p>This estimate includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.</p>',
       '<p>Final pricing can vary based on state availability, data needs, and compliance requirements.</p>',
@@ -174,6 +208,10 @@ function sendTeamNotification_(lead) {
       'Name: ' + lead.name,
       'Email: ' + lead.email,
       'Role: ' + lead.role,
+      'Campaign: ' + lead.campaign,
+      'State: ' + lead.state,
+      'Requested state: ' + lead.requestedState,
+      'Timeframe: ' + lead.timeframeLabel,
       'Campaign size: ' + lead.campaignSizeLabel,
       'Estimate: ' + lead.estimateFormatted,
       'Source: ' + lead.source,
@@ -187,6 +225,14 @@ function sendTeamNotification_(lead) {
       escapeHtml_(lead.email),
       '</p><p><strong>Role:</strong> ',
       escapeHtml_(lead.role),
+      '</p><p><strong>Campaign:</strong> ',
+      escapeHtml_(lead.campaign),
+      '</p><p><strong>State:</strong> ',
+      escapeHtml_(lead.state),
+      '</p><p><strong>Requested state:</strong> ',
+      escapeHtml_(lead.requestedState),
+      '</p><p><strong>Timeframe:</strong> ',
+      escapeHtml_(lead.timeframeLabel),
       '</p><p><strong>Campaign size:</strong> ',
       escapeHtml_(lead.campaignSizeLabel),
       '</p><p><strong>Estimate:</strong> ',
