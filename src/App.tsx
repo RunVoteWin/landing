@@ -1781,11 +1781,6 @@ function JoinWaitlistPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!signupEndpoint) {
-      setStatus('needs-endpoint');
-      return;
-    }
-
     setStatus('loading');
 
     try {

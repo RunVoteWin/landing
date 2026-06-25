@@ -65,9 +65,9 @@ export default async function handler(req: Req, res: Res) {
     return;
   }
 
-  const endpoint = process.env.VITE_SIGNUP_ENDPOINT;
+  const endpoint = process.env.SIGNUP_ENDPOINT ?? process.env.VITE_SIGNUP_ENDPOINT;
   if (!endpoint) {
-    res.status(503).json({ error: 'VITE_SIGNUP_ENDPOINT is not configured.' });
+    res.status(503).json({ error: 'SIGNUP_ENDPOINT or VITE_SIGNUP_ENDPOINT is not configured.' });
     return;
   }
 
