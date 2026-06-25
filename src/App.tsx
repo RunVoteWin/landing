@@ -1661,41 +1661,6 @@ function CareersPage() {
   );
 }
 
-function FinalCTA() {
-  return (
-    <section className="bg-hero py-16 md:py-20">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.9fr_1fr] lg:items-center">
-        <div>
-          <p className="mb-4 text-sm font-extrabold uppercase text-accent">Ready when your campaign is</p>
-          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary md:text-5xl">
-            Build the field operation your opponent wishes you did not have.
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-on-surface-variant">
-            Get a serious look at the voter-contact platform built for speed, reliability, and wins.
-          </p>
-        </div>
-
-        <div className="grid gap-4">
-          <a
-            href={waitlistPath}
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container"
-          >
-            Join the Waitlist
-            <ArrowRight size={20} />
-          </a>
-          <a
-            href={sandboxUrl}
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-outline-variant bg-white px-6 py-4 font-display text-lg font-extrabold text-primary shadow-sm transition hover:bg-surface-container-low"
-          >
-            Try the Sandbox
-            <ArrowRight size={20} />
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function JoinWaitlistPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -2180,7 +2145,6 @@ export default function App() {
           <Comparison />
           <Ownership />
           <States />
-          <FinalCTA />
         </main>
       )}
       <Footer />
