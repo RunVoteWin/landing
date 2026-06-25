@@ -34,10 +34,6 @@ The landing page posts lead, waitlist, and pricing form submissions directly to 
 
 Use a Google Apps Script web app URL for that value. The Apps Script should handle the private work: appending to the lead sheet and optionally notifying Slack.
 
-The checked-in Apps Script currently appends submissions to spreadsheet `1Ia8ppbMMQIlAv6Ep3Z8DbwHBHpmCNyzOZ7d8BYv_laQ`, sheet `Leads`.
-
-The `/join-waitlist` page sends `formType: "launch-waitlist"` with a waitlist position starting at `101`.
-
 Example payload:
 
 ```json

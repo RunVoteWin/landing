@@ -28,7 +28,7 @@ const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? vi
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 const sandboxUrl = 'https://app.runvotewin.com/sandbox';
 const docsUrl = 'https://docs.runvotewin.com';
-const waitlistPath = '/join-waitlist';
+const waitlistPath = '/waitlist';
 const waitlistBasePosition = 101;
 const waitlistPositionStorageKey = 'runvotewin:waitlist-next-position';
 
