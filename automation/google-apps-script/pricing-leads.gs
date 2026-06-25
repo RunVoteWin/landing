@@ -41,7 +41,7 @@ function doPost(event) {
     const payload = parsePayload_(event);
     const normalized = normalizeLead_(payload);
 
-    if (normalized.formType === 'launch-waitlist') {
+    if (normalized.formType === 'launch-waitlist' && !normalized.waitlistPosition) {
       normalized.waitlistPosition = nextWaitlistPosition_();
     }
 
