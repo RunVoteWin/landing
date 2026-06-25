@@ -30,9 +30,13 @@ The `vercel.json` rewrite keeps client-side routes such as `/win-for-life` worki
 
 ## Lead and Pricing Forms
 
-The landing page posts lead and pricing form submissions to `VITE_SIGNUP_ENDPOINT`.
+The landing page posts lead, waitlist, and pricing form submissions to server-side API routes that forward to `SIGNUP_ENDPOINT`.
 
 Use a Google Apps Script web app URL for that value. The Apps Script should handle the private work: appending to the lead sheet and optionally notifying Slack.
+
+The checked-in Apps Script currently appends submissions to spreadsheet `1Ia8ppbMMQIlAv6Ep3Z8DbwHBHpmCNyzOZ7d8BYv_laQ`, sheet `Leads`.
+
+General lead and pricing forms post to `/api/leads/submit`. The `/join-waitlist` page posts to `/api/waitlist/submit`, which forwards to the Apps Script endpoint server-side so it can display the waitlist position returned by the sheet automation. Launch waitlist positions start at `101`. Server-side routes read `SIGNUP_ENDPOINT` first, then fall back to `VITE_SIGNUP_ENDPOINT`.
 
 Example payload:
 
@@ -48,9 +52,21 @@ Example payload:
 }
 ```
 
+Launch waitlist payloads use:
+
+```json
+{
+  "formType": "launch-waitlist",
+  "name": "Jane Organizer",
+  "email": "jane@campaign.org",
+  "source": "RunVoteWin launch waitlist"
+}
+```
+
 ### Vercel environment variables
 
 ```txt
+SIGNUP_ENDPOINT=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
 VITE_SIGNUP_ENDPOINT=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
 VITE_WIN_FOR_LIFE_CHECKOUT_URL=https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00
 ```
