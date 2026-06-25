@@ -33,12 +33,17 @@ const LEAD_HEADERS = [
   'Estimate Formatted',
   'Source',
   'Page',
+  'Waitlist Position',
 ];
 
 function doPost(event) {
   try {
     const payload = parsePayload_(event);
     const normalized = normalizeLead_(payload);
+
+    if (normalized.formType === 'launch-waitlist') {
+      normalized.waitlistPosition = nextWaitlistPosition_();
+    }
 
     appendLead_(normalized);
 
@@ -50,7 +55,7 @@ function doPost(event) {
       sendTeamNotification_(normalized);
     }
 
-    return json_({ ok: true });
+    return json_({ ok: true, waitlistPosition: normalized.waitlistPosition || null });
   } catch (error) {
     return json_({ ok: false, error: String(error) });
   }
@@ -96,6 +101,7 @@ function normalizeLead_(payload) {
     estimateMonthly,
     orderTotal: Number(payload.orderTotal || 0),
     estimateFormatted: String(payload.estimateFormatted || '').trim() || (estimateMonthly ? formatUsd_(estimateMonthly) + '/mo' : ''),
+    waitlistPosition: Number(payload.waitlistPosition || 0),
     source: String(payload.source || '').trim(),
     page: String(payload.page || '').trim(),
   };
@@ -128,6 +134,7 @@ function appendLead_(lead) {
     lead.estimateFormatted,
     lead.source,
     lead.page,
+    lead.waitlistPosition || '',
   ]);
 }
 
@@ -155,7 +162,50 @@ function getLeadSheet_() {
   return sheet;
 }
 
+function nextWaitlistPosition_() {
+  const sheet = getLeadSheet_();
+  const lastRow = sheet.getLastRow();
+  const basePosition = 101;
+
+  if (lastRow <= 1) {
+    return basePosition;
+  }
+
+  const formTypes = sheet.getRange(2, 3, lastRow - 1, 1).getValues();
+  const existingWaitlistCount = formTypes.filter(function (row) {
+    return row[0] === 'launch-waitlist';
+  }).length;
+
+  return basePosition + existingWaitlistCount;
+}
+
 function sendLeadEmail_(lead) {
+  if (lead.formType === 'launch-waitlist') {
+    MailApp.sendEmail({
+      to: lead.email,
+      subject: 'You are on the RunVoteWin waitlist',
+      body: [
+        'Thanks for joining the RunVoteWin waitlist.',
+        '',
+        lead.waitlistPosition ? 'Your place in line: #' + lead.waitlistPosition : 'You are on the list.',
+        '',
+        'We will notify you as soon as RunVoteWin is live. Waitlisted users will also get a subscription discount when RunVoteWin officially launches.',
+        '',
+        'Try the sandbox: https://app.runvotewin.com/sandbox',
+        '',
+        '- The RunVoteWin team',
+      ].join('\n'),
+      htmlBody: [
+        '<p>Thanks for joining the RunVoteWin waitlist.</p>',
+        lead.waitlistPosition ? '<p><strong>Your place in line: #' + escapeHtml_(lead.waitlistPosition) + '</strong></p>' : '<p>You are on the list.</p>',
+        '<p>We will notify you as soon as RunVoteWin is live. Waitlisted users will also get a subscription discount when RunVoteWin officially launches.</p>',
+        '<p>Try the sandbox: <a href="https://app.runvotewin.com/sandbox">https://app.runvotewin.com/sandbox</a></p>',
+        '<p>- The RunVoteWin team</p>',
+      ].join(''),
+    });
+    return;
+  }
+
   if (lead.formType !== 'pricing') {
     MailApp.sendEmail({
       to: lead.email,
@@ -191,7 +241,7 @@ function sendLeadEmail_(lead) {
       'This estimate includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.',
       'Final pricing can vary based on state availability, data needs, and compliance requirements.',
       '',
-      'Access the app: https://app.runvotewin.com',
+      'Try the sandbox: https://app.runvotewin.com/sandbox',
       '',
       '- The RunVoteWin team',
     ].join('\n'),
@@ -215,7 +265,7 @@ function sendLeadEmail_(lead) {
       '</p>',
       '<p>This estimate includes canvassing, intelligent turf cutting, voter-data workspace, imports and exports, reporting, and standard support.</p>',
       '<p>Final pricing can vary based on state availability, data needs, and compliance requirements.</p>',
-      '<p>You can access the app here: <a href="https://app.runvotewin.com">https://app.runvotewin.com</a></p>',
+      '<p>You can try the sandbox here: <a href="https://app.runvotewin.com/sandbox">https://app.runvotewin.com/sandbox</a></p>',
       '<p>- The RunVoteWin team</p>',
     ].join(''),
   });
@@ -240,6 +290,7 @@ function sendTeamNotification_(lead) {
       'Tier: ' + lead.tier,
       'Voters: ' + lead.voters,
       'Estimate: ' + lead.estimateFormatted,
+      'Waitlist position: ' + (lead.waitlistPosition || ''),
       'Source: ' + lead.source,
     ].join('\n'),
     htmlBody: [
@@ -267,6 +318,8 @@ function sendTeamNotification_(lead) {
       escapeHtml_(lead.voters),
       '</p><p><strong>Estimate:</strong> ',
       escapeHtml_(lead.estimateFormatted),
+      '</p><p><strong>Waitlist position:</strong> ',
+      escapeHtml_(lead.waitlistPosition || ''),
       '</p><p><strong>Source:</strong> ',
       escapeHtml_(lead.source),
       '</p>',

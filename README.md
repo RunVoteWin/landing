@@ -30,9 +30,13 @@ The `vercel.json` rewrite keeps client-side routes such as `/win-for-life` worki
 
 ## Lead and Pricing Forms
 
-The landing page posts lead and pricing form submissions to `VITE_SIGNUP_ENDPOINT`.
+The landing page posts lead, waitlist, and pricing form submissions to `VITE_SIGNUP_ENDPOINT`.
 
 Use a Google Apps Script web app URL for that value. The Apps Script should handle the private work: appending to the lead sheet and optionally notifying Slack.
+
+The checked-in Apps Script currently appends submissions to spreadsheet `1Ia8ppbMMQIlAv6Ep3Z8DbwHBHpmCNyzOZ7d8BYv_laQ`, sheet `Leads`.
+
+The `/join-waitlist` page posts to `/api/waitlist/submit`, which forwards to the Apps Script endpoint server-side so it can display the waitlist position returned by the sheet automation. Launch waitlist positions start at `101`.
 
 Example payload:
 
@@ -45,6 +49,17 @@ Example payload:
   "campaignSize": "congressional",
   "estimateMonthly": 1250,
   "source": "RunVoteWin landing page"
+}
+```
+
+Launch waitlist payloads use:
+
+```json
+{
+  "formType": "launch-waitlist",
+  "name": "Jane Organizer",
+  "email": "jane@campaign.org",
+  "source": "RunVoteWin launch waitlist"
 }
 ```
 

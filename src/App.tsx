@@ -26,8 +26,9 @@ import {
 const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 const victoryPassCheckoutUrl = 'https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00';
 const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? victoryPassCheckoutUrl;
-const appUrl = 'https://app.runvotewin.com';
+const sandboxUrl = 'https://app.runvotewin.com/sandbox';
 const docsUrl = 'https://docs.runvotewin.com';
+const waitlistPath = '/join-waitlist';
 
 type SignupFormVariant = 'hero' | 'compact';
 
@@ -91,6 +92,7 @@ const navItems = [
   { label: 'Pricing', href: '/#pricing' },
   { label: 'Integrations', href: '/#integrations' },
   { label: 'Compare', href: '/#compare' },
+  { label: 'Waitlist', href: waitlistPath },
 ];
 
 const organizingPhotoUrl =
@@ -450,6 +452,33 @@ async function fetchPricingJson<T>(url: string, init: RequestInit | undefined, l
   return response.json() as Promise<T>;
 }
 
+async function submitWaitlist(input: { name: string; email: string; website: FormDataEntryValue | null }) {
+  const response = await fetch('/api/waitlist/submit', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: input.name,
+      email: input.email,
+      website: input.website ?? '',
+      page: window.location.href,
+    }),
+  });
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (!response.ok) {
+    if (response.status === 503) {
+      throw new Error('needs-endpoint');
+    }
+    throw new Error(`Waitlist submission failed: ${response.status}`);
+  }
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Waitlist submission returned ${contentType || 'an unknown content type'}`);
+  }
+
+  return response.json() as Promise<{ ok: boolean; waitlistPosition: number | null }>;
+}
+
 function calculatePricingFallback(selection: PricingSelection): PricingResult {
   try {
     return calculatePricing(selection as PricingInput);
@@ -607,10 +636,18 @@ function Navbar() {
         </div>
 
         <a
-          href={appUrl}
+          href={waitlistPath}
+          className="hidden shrink-0 items-center gap-2 rounded-md bg-secondary-container px-3 py-2.5 text-sm font-bold text-primary shadow-sm transition hover:bg-white sm:inline-flex sm:px-4"
+        >
+          Join Waitlist
+          <ArrowRight size={16} />
+        </a>
+
+        <a
+          href={sandboxUrl}
           className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-3 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary-container sm:px-4"
         >
-          Access App
+          Try the Sandbox
           <ArrowRight size={16} />
         </a>
       </div>
@@ -651,8 +688,21 @@ function Hero() {
             Finally, modern field tools for teams that cannot afford laggy software, broken exports, stale field reports, or slow customer support.
           </p>
 
-          <div className="mt-8">
-            <SignupForm variant="hero" />
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <a
+              href={waitlistPath}
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-secondary-container px-7 py-4 font-display text-lg font-extrabold text-primary shadow-xl transition hover:bg-white"
+            >
+              Join the Waitlist
+              <ArrowRight size={20} />
+            </a>
+            <a
+              href={sandboxUrl}
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-white/30 bg-white/12 px-7 py-4 font-display text-lg font-extrabold text-white shadow-lg backdrop-blur transition hover:bg-white/20"
+            >
+              Try the Sandbox
+              <ArrowRight size={20} />
+            </a>
           </div>
         </motion.div>
 
@@ -1702,17 +1752,165 @@ function FinalCTA() {
         </div>
 
         <div className="grid gap-4">
-          <SignupForm variant="compact" />
           <a
-            href={appUrl}
+            href={waitlistPath}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container"
+          >
+            Join the Waitlist
+            <ArrowRight size={20} />
+          </a>
+          <a
+            href={sandboxUrl}
             className="inline-flex items-center justify-center gap-2 rounded-md border border-outline-variant bg-white px-6 py-4 font-display text-lg font-extrabold text-primary shadow-sm transition hover:bg-surface-container-low"
           >
-            Access App
+            Try the Sandbox
             <ArrowRight size={20} />
           </a>
         </div>
       </div>
     </section>
+  );
+}
+
+function JoinWaitlistPage() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [position, setPosition] = useState<number | null>(null);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!signupEndpoint) {
+      setStatus('needs-endpoint');
+      return;
+    }
+
+    setStatus('loading');
+
+    try {
+      const formData = new FormData(event.currentTarget);
+      const result = await submitWaitlist({
+        name,
+        email,
+        website: formData.get('website') ?? '',
+      });
+
+      setPosition(result.waitlistPosition);
+      setStatus('success');
+      setName('');
+      setEmail('');
+    } catch (error) {
+      setPosition(null);
+      setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
+    }
+  }
+
+  return (
+    <main className="bg-surface pt-36 text-primary md:pt-40">
+      <section className="bg-hero pb-16 md:pb-20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.9fr_0.78fr] lg:items-center">
+          <div className="max-w-3xl">
+            <p className="mb-4 text-sm font-extrabold uppercase text-accent">Join the Waitlist</p>
+            <h1 className="font-display text-5xl font-extrabold tracking-tight md:text-7xl">
+              Be first in line for RunVoteWin.
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-on-surface-variant md:text-xl">
+              Get notified as soon as RunVoteWin is live, and be the first with access to new features. Waitlisted users will also get a discount on subscriptions when RunVoteWin officially launches.
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {[
+                'Launch notification',
+                'Early feature access',
+                'Subscription discount',
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-md border border-outline-variant bg-white p-4 shadow-sm">
+                  <CheckCircle2 className="shrink-0 text-secondary" size={20} />
+                  <p className="text-sm font-bold text-primary">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="rounded-lg border border-outline-variant bg-white p-6 shadow-xl">
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
+
+            <p className="text-sm font-extrabold uppercase text-accent">Reserve your place</p>
+            <div className="mt-5 grid gap-4">
+              <label>
+                <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+                  <User size={16} />
+                  Name
+                </span>
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  required
+                  className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                  placeholder="Jane Organizer"
+                  type="text"
+                />
+              </label>
+
+              <label>
+                <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+                  <Mail size={16} />
+                  Email
+                </span>
+                <input
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                  className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                  placeholder="jane@campaign.org"
+                  type="email"
+                />
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={status === 'loading'}
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {status === 'loading' ? 'Joining...' : 'Join the Waitlist'}
+              <ArrowRight size={20} />
+            </button>
+
+            {status === 'needs-endpoint' && (
+              <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
+                Waitlist collection is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+              </p>
+            )}
+            {status === 'success' && (
+              <div className="mt-4 rounded-md bg-secondary/10 p-4 text-primary">
+                <p className="text-sm font-bold uppercase text-secondary">You are in line</p>
+                {position !== null ? (
+                  <p className="mt-1 font-display text-4xl font-extrabold">#{position}</p>
+                ) : (
+                  <p className="mt-1 font-display text-3xl font-extrabold">You are on the list.</p>
+                )}
+                <p className="mt-2 text-sm font-semibold leading-6 text-on-surface-variant">
+                  We will email you as soon as RunVoteWin is live.
+                </p>
+              </div>
+            )}
+            {status === 'error' && (
+              <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
+                Something went wrong. Please try again.
+              </p>
+            )}
+          </form>
+        </div>
+      </section>
+    </main>
   );
 }
 
@@ -1991,11 +2189,14 @@ export default function App() {
   const isCareersPage = path === '/careers';
   const isPrivacyPolicyPage = path === '/privacy-policy' || path === '/privacy';
   const isTermsOfServicePage = path === '/terms-of-service' || path === '/terms';
+  const isJoinWaitlistPage = path === waitlistPath;
 
   return (
     <div className="min-h-screen bg-surface">
       <Navbar />
-      {isCareersPage ? (
+      {isJoinWaitlistPage ? (
+        <JoinWaitlistPage />
+      ) : isCareersPage ? (
         <CareersPage />
       ) : isPrivacyPolicyPage ? (
         <PrivacyPolicyPage />
