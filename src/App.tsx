@@ -1493,10 +1493,7 @@ function States() {
 
 function WaitlistForm() {
   const [name, setName] = useState('');
-  const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
-  const [campaign, setCampaign] = useState('');
-  const [requestedState, setRequestedState] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -1509,20 +1506,14 @@ function WaitlistForm() {
       await postLead({
         formType: 'state-waitlist',
         name,
-        role,
         email,
-        campaign,
-        requestedState,
         source: 'RunVoteWin state waitlist',
         website: formData.get('website') ?? '',
       });
 
       setStatus('success');
       setName('');
-      setRole('');
       setEmail('');
-      setCampaign('');
-      setRequestedState('');
     } catch (error) {
       setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
     }
@@ -1552,17 +1543,6 @@ function WaitlistForm() {
           />
         </label>
         <label>
-          <span className="mb-2 block text-sm font-bold text-primary">Role</span>
-          <input
-            value={role}
-            onChange={(event) => setRole(event.target.value)}
-            required
-            className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-            placeholder="Candidate, consultant, staff"
-            type="text"
-          />
-        </label>
-        <label>
           <span className="mb-2 block text-sm font-bold text-primary">Email</span>
           <input
             value={email}
@@ -1571,28 +1551,6 @@ function WaitlistForm() {
             className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
             placeholder="jane@campaign.org"
             type="email"
-          />
-        </label>
-        <label>
-          <span className="mb-2 block text-sm font-bold text-primary">Campaign</span>
-          <input
-            value={campaign}
-            onChange={(event) => setCampaign(event.target.value)}
-            required
-            className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-            placeholder="Jane for Congress"
-            type="text"
-          />
-        </label>
-        <label className="sm:col-span-2">
-          <span className="mb-2 block text-sm font-bold text-primary">State being requested</span>
-          <input
-            value={requestedState}
-            onChange={(event) => setRequestedState(event.target.value)}
-            required
-            className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-            placeholder="North Carolina"
-            type="text"
           />
         </label>
       </div>
