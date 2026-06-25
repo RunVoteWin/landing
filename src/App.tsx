@@ -23,7 +23,6 @@ import {
   Vote,
 } from 'lucide-react';
 
-const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 const victoryPassCheckoutUrl = 'https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00';
 const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? victoryPassCheckoutUrl;
 const sandboxUrl = 'https://app.runvotewin.com/sandbox';
@@ -423,15 +422,22 @@ function formatVoters(value: number) {
 }
 
 function postLead(payload: Record<string, unknown>) {
-  return fetch(signupEndpoint, {
+  return fetch('/api/leads/submit', {
     method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       ...payload,
-      submittedAt: new Date().toISOString(),
       page: window.location.href,
     }),
+  }).then((response) => {
+    if (!response.ok) {
+      if (response.status === 503) {
+        throw new Error('needs-endpoint');
+      }
+      throw new Error(`Lead submission failed: ${response.status}`);
+    }
+    return response;
   });
 }
 
@@ -498,11 +504,6 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!signupEndpoint) {
-      setStatus('needs-endpoint');
-      return;
-    }
-
     setStatus('loading');
 
     try {
@@ -518,8 +519,8 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
       setStatus('success');
       setName('');
       setEmail('');
-    } catch {
-      setStatus('error');
+    } catch (error) {
+      setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
     }
   }
 
@@ -582,7 +583,7 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
 
       {status === 'needs-endpoint' && (
         <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
-          This form is ready. Add the Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+          This form is ready. Add the Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
         </p>
       )}
       {status === 'success' && (
@@ -881,11 +882,6 @@ function Pricing() {
 
     if (!result || !role) return;
 
-    if (!signupEndpoint) {
-      setStatus('needs-endpoint');
-      return;
-    }
-
     setStatus('loading');
 
     try {
@@ -919,8 +915,8 @@ function Pricing() {
       setStatus('success');
       setName('');
       setEmail('');
-    } catch {
-      setStatus('error');
+    } catch (error) {
+      setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
     }
   }
 
@@ -1259,7 +1255,7 @@ function Pricing() {
 
             {status === 'needs-endpoint' && (
               <p className="mt-4 rounded-md bg-primary/8 p-3 text-sm font-semibold leading-6 text-primary">
-                Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+                Pricing email automation is ready. Add the Google Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
               </p>
             )}
             {status === 'success' && (
@@ -1531,11 +1527,6 @@ function WaitlistForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!signupEndpoint) {
-      setStatus('needs-endpoint');
-      return;
-    }
-
     setStatus('loading');
 
     try {
@@ -1557,8 +1548,8 @@ function WaitlistForm() {
       setEmail('');
       setCampaign('');
       setRequestedState('');
-    } catch {
-      setStatus('error');
+    } catch (error) {
+      setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
     }
   }
 
@@ -1640,7 +1631,7 @@ function WaitlistForm() {
       </button>
       {status === 'needs-endpoint' && (
         <p className="mt-4 rounded-md bg-primary/8 p-3 text-sm font-semibold leading-6 text-primary">
-          Waitlist automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+          Waitlist automation is ready. Add the Google Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
         </p>
       )}
       {status === 'success' && (
@@ -1881,7 +1872,7 @@ function JoinWaitlistPage() {
 
             {status === 'needs-endpoint' && (
               <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
-                Waitlist collection is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+                Waitlist collection is ready. Add the Google Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
               </p>
             )}
             {status === 'success' && (
