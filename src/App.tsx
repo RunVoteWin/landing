@@ -1759,17 +1759,11 @@ function JoinWaitlistPage() {
 
             {status !== 'success' && (
               <>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-extrabold uppercase text-accent">Reserve your place</p>
-                    <p className="mt-2 text-sm font-semibold leading-6 text-on-surface-variant">
-                      First public waitlist spots start at #101.
-                    </p>
-                  </div>
-                  <div className="rounded-md bg-surface-container px-3 py-2 text-right">
-                    <p className="text-xs font-bold uppercase text-on-surface-variant">Starts</p>
-                    <p className="font-display text-2xl font-extrabold text-primary">#101</p>
-                  </div>
+                <div>
+                  <p className="text-sm font-extrabold uppercase text-accent">Reserve your place</p>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-on-surface-variant">
+                    First public waitlist spots start at #101.
+                  </p>
                 </div>
 
                 <div className="mt-5 grid gap-4">
