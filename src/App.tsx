@@ -94,7 +94,6 @@ const navItems = [
   { label: 'Pricing', href: '/#pricing' },
   { label: 'Integrations', href: '/#integrations' },
   { label: 'Compare', href: '/#compare' },
-  { label: 'Waitlist', href: waitlistPath },
 ];
 
 const organizingPhotoUrl =
@@ -1494,10 +1493,7 @@ function States() {
 
 function WaitlistForm() {
   const [name, setName] = useState('');
-  const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
-  const [campaign, setCampaign] = useState('');
-  const [requestedState, setRequestedState] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'needs-endpoint' | 'error'>('idle');
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -1510,20 +1506,14 @@ function WaitlistForm() {
       await postLead({
         formType: 'state-waitlist',
         name,
-        role,
         email,
-        campaign,
-        requestedState,
         source: 'RunVoteWin state waitlist',
         website: formData.get('website') ?? '',
       });
 
       setStatus('success');
       setName('');
-      setRole('');
       setEmail('');
-      setCampaign('');
-      setRequestedState('');
     } catch (error) {
       setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
     }
@@ -1553,17 +1543,6 @@ function WaitlistForm() {
           />
         </label>
         <label>
-          <span className="mb-2 block text-sm font-bold text-primary">Role</span>
-          <input
-            value={role}
-            onChange={(event) => setRole(event.target.value)}
-            required
-            className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-            placeholder="Candidate, consultant, staff"
-            type="text"
-          />
-        </label>
-        <label>
           <span className="mb-2 block text-sm font-bold text-primary">Email</span>
           <input
             value={email}
@@ -1572,28 +1551,6 @@ function WaitlistForm() {
             className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
             placeholder="jane@campaign.org"
             type="email"
-          />
-        </label>
-        <label>
-          <span className="mb-2 block text-sm font-bold text-primary">Campaign</span>
-          <input
-            value={campaign}
-            onChange={(event) => setCampaign(event.target.value)}
-            required
-            className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-            placeholder="Jane for Congress"
-            type="text"
-          />
-        </label>
-        <label className="sm:col-span-2">
-          <span className="mb-2 block text-sm font-bold text-primary">State being requested</span>
-          <input
-            value={requestedState}
-            onChange={(event) => setRequestedState(event.target.value)}
-            required
-            className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-            placeholder="North Carolina"
-            type="text"
           />
         </label>
       </div>
@@ -1779,32 +1736,38 @@ function JoinWaitlistPage() {
   }
 
   return (
-    <main className="bg-surface pt-36 text-primary md:pt-40">
-      <section className="bg-hero pb-16 md:pb-20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-8 lg:grid-cols-[0.9fr_0.78fr] lg:items-center">
+    <main className="flex-1 bg-primary text-white">
+      <section className="relative isolate flex min-h-[calc(100vh-8rem)] flex-col overflow-hidden pt-28 md:pt-36">
+        <div className="absolute inset-0 -z-10">
+          <img src={organizingPhotoUrl} alt="Campaign organizers working together" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-primary/84" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/86 to-accent/58" />
+        </div>
+
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 pb-12 md:px-8 md:pb-20 lg:grid-cols-[0.95fr_0.72fr] lg:items-center">
           <div className="max-w-3xl">
-            <p className="mb-4 text-sm font-extrabold uppercase text-accent">Join the Waitlist</p>
-            <h1 className="font-display text-5xl font-extrabold tracking-tight md:text-7xl">
+            <p className="mb-4 text-xs font-extrabold uppercase tracking-wide text-secondary-container sm:text-sm">Join the Waitlist</p>
+            <h1 className="font-display text-4xl font-extrabold leading-[1.02] tracking-tight sm:text-5xl md:text-7xl">
               Be first in line for RunVoteWin.
             </h1>
-            <p className="mt-6 text-lg leading-8 text-on-surface-variant md:text-xl">
+            <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-on-primary-container sm:text-lg md:mt-6 md:text-xl md:leading-8">
               Get notified as soon as RunVoteWin is live, and be the first with access to new features. Waitlisted users will also get a discount on subscriptions when RunVoteWin officially launches.
             </p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="mt-6 grid gap-3 sm:grid-cols-3 md:mt-8">
               {[
                 'Launch notification',
                 'Early feature access',
                 'Subscription discount',
               ].map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-md border border-outline-variant bg-white p-4 shadow-sm">
-                  <CheckCircle2 className="shrink-0 text-secondary" size={20} />
-                  <p className="text-sm font-bold text-primary">{item}</p>
+                <div key={item} className="flex items-center gap-3 rounded-md border border-white/18 bg-white/10 p-3 shadow-sm backdrop-blur">
+                  <CheckCircle2 className="shrink-0 text-secondary-container" size={20} />
+                  <p className="text-sm font-bold leading-5 text-white">{item}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="rounded-lg border border-outline-variant bg-white p-6 shadow-xl">
+          <form onSubmit={handleSubmit} className="rounded-lg border border-white/20 bg-white p-5 text-primary shadow-2xl sm:p-6">
             <input
               type="text"
               name="website"
@@ -1814,72 +1777,103 @@ function JoinWaitlistPage() {
               className="hidden"
             />
 
-            <p className="text-sm font-extrabold uppercase text-accent">Reserve your place</p>
-            <div className="mt-5 grid gap-4">
-              <label>
-                <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
-                  <User size={16} />
-                  Name
-                </span>
-                <input
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  required
-                  className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-                  placeholder="Jane Organizer"
-                  type="text"
-                />
-              </label>
-
-              <label>
-                <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
-                  <Mail size={16} />
-                  Email
-                </span>
-                <input
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                  className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
-                  placeholder="jane@campaign.org"
-                  type="email"
-                />
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {status === 'loading' ? 'Joining...' : 'Join the Waitlist'}
-              <ArrowRight size={20} />
-            </button>
-
-            {status === 'needs-endpoint' && (
-              <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
-                Waitlist collection is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
-              </p>
-            )}
             {status === 'success' && (
-              <div className="mt-4 rounded-md bg-secondary/10 p-4 text-primary">
-                <p className="text-sm font-bold uppercase text-secondary">You are in line</p>
+              <div className="rounded-md bg-secondary/10 p-5 text-center text-primary">
+                <p className="text-sm font-extrabold uppercase text-secondary">You are on the waitlist</p>
                 {position !== null ? (
-                  <p className="mt-1 font-display text-4xl font-extrabold">#{position}</p>
+                  <p className="mt-2 font-display text-6xl font-extrabold leading-none sm:text-7xl">#{position}</p>
                 ) : (
                   <p className="mt-1 font-display text-3xl font-extrabold">You are on the list.</p>
                 )}
-                <p className="mt-2 text-sm font-semibold leading-6 text-on-surface-variant">
-                  We will email you as soon as RunVoteWin is live.
+                <p className="mx-auto mt-3 max-w-sm text-sm font-semibold leading-6 text-on-surface-variant">
+                  We saved your spot and will email you as soon as RunVoteWin is live.
                 </p>
               </div>
             )}
-            {status === 'error' && (
-              <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
-                Something went wrong. Please try again.
-              </p>
+
+            {status !== 'success' && (
+              <>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-extrabold uppercase text-accent">Reserve your place</p>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-on-surface-variant">
+                      First public waitlist spots start at #101.
+                    </p>
+                  </div>
+                  <div className="rounded-md bg-surface-container px-3 py-2 text-right">
+                    <p className="text-xs font-bold uppercase text-on-surface-variant">Starts</p>
+                    <p className="font-display text-2xl font-extrabold text-primary">#101</p>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4">
+                  <label>
+                    <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+                      <User size={16} />
+                      Name
+                    </span>
+                    <input
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      required
+                      className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                      placeholder="Jane Organizer"
+                      type="text"
+                    />
+                  </label>
+
+                  <label>
+                    <span className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+                      <Mail size={16} />
+                      Email
+                    </span>
+                    <input
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      required
+                      className="w-full rounded-md border border-outline-variant bg-surface px-4 py-3 text-base text-primary outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/12"
+                      placeholder="jane@campaign.org"
+                      type="email"
+                    />
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-5 py-4 font-display text-lg font-extrabold text-white shadow-lg transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {status === 'loading' ? 'Joining...' : 'Join the Waitlist'}
+                  <ArrowRight size={20} />
+                </button>
+
+                {status === 'needs-endpoint' && (
+                  <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
+                    Waitlist collection is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
+                  </p>
+                )}
+                {status === 'error' && (
+                  <p className="mt-4 rounded-md bg-red-50 p-3 text-sm font-semibold text-red-700">
+                    Something went wrong. Please try again.
+                  </p>
+                )}
+              </>
             )}
           </form>
+        </div>
+
+        <div className="pointer-events-none mt-auto px-5 pb-8 md:px-8 md:pb-10">
+          <div className="relative mx-auto h-24 max-w-7xl overflow-hidden rounded-lg border border-white/12 bg-white/7 md:h-28">
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(142,239,255,0.14)_1px,transparent_1px),linear-gradient(rgba(142,239,255,0.12)_1px,transparent_1px)] bg-[size:38px_38px]" />
+            <div className="absolute left-[-8%] top-6 h-28 w-[118%] rounded-[50%] border-t-2 border-dashed border-secondary-container/45" />
+            <div className="absolute left-[10%] top-12 h-24 w-[82%] rounded-[50%] border-t border-white/25" />
+            <div className="absolute bottom-5 left-[18%] h-3 w-3 rounded-full border-2 border-secondary-container bg-primary shadow-[0_0_0_6px_rgba(142,239,255,0.12)]" />
+            <div className="absolute right-[22%] top-6 h-3 w-3 rounded-full border-2 border-white bg-secondary shadow-[0_0_0_6px_rgba(255,255,255,0.1)]" />
+            <div className="absolute bottom-4 right-5 flex items-center gap-2 rounded-md bg-primary/65 px-3 py-2 text-xs font-extrabold uppercase text-secondary-container backdrop-blur">
+              <MapPinned size={15} />
+              <span>Launch route</span>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -2130,7 +2124,7 @@ function TermsOfServicePage() {
 
 function Footer() {
   return (
-    <footer className="bg-primary py-12 text-white">
+    <footer className="mt-auto bg-primary py-12 text-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 md:flex-row md:items-center md:justify-between md:px-8">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-md bg-white/10">
@@ -2164,7 +2158,7 @@ export default function App() {
   const isJoinWaitlistPage = path === waitlistPath;
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="flex min-h-screen flex-col bg-surface">
       <Navbar />
       {isJoinWaitlistPage ? (
         <JoinWaitlistPage />
