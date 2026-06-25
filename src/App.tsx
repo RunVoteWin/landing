@@ -31,6 +31,7 @@ const docsUrl = 'https://docs.runvotewin.com';
 const waitlistPath = '/waitlist';
 const waitlistBasePosition = 101;
 const waitlistPositionStorageKey = 'runvotewin:waitlist-next-position';
+const waitlistTurfsMapUrl = 'waitlist-turfs-map.png';
 
 type SignupFormVariant = 'hero' | 'compact';
 
@@ -1827,16 +1828,16 @@ function JoinWaitlistPage() {
           </form>
         </div>
 
-        <div className="pointer-events-none mt-auto px-5 pb-8 md:px-8 md:pb-10">
-          <div className="relative mx-auto h-24 max-w-7xl overflow-hidden rounded-lg border border-white/12 bg-white/7 md:h-28">
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(142,239,255,0.14)_1px,transparent_1px),linear-gradient(rgba(142,239,255,0.12)_1px,transparent_1px)] bg-[size:38px_38px]" />
-            <div className="absolute left-[-8%] top-6 h-28 w-[118%] rounded-[50%] border-t-2 border-dashed border-secondary-container/45" />
-            <div className="absolute left-[10%] top-12 h-24 w-[82%] rounded-[50%] border-t border-white/25" />
-            <div className="absolute bottom-5 left-[18%] h-3 w-3 rounded-full border-2 border-secondary-container bg-primary shadow-[0_0_0_6px_rgba(142,239,255,0.12)]" />
-            <div className="absolute right-[22%] top-6 h-3 w-3 rounded-full border-2 border-white bg-secondary shadow-[0_0_0_6px_rgba(255,255,255,0.1)]" />
-            <div className="absolute bottom-4 right-5 flex items-center gap-2 rounded-md bg-primary/65 px-3 py-2 text-xs font-extrabold uppercase text-secondary-container backdrop-blur">
-              <MapPinned size={15} />
-              <span>Launch route</span>
+        <div className="pointer-events-none mt-auto px-5 pb-8 pt-4 md:px-8 md:pb-10">
+          <div className="mx-auto max-w-6xl rounded-xl border border-white/18 bg-sky-100/16 p-4 shadow-2xl shadow-primary/30 backdrop-blur-sm sm:p-6 md:p-8">
+            <div className="relative aspect-[1.45/1] overflow-hidden rounded-lg bg-sky-100 sm:aspect-[2.1/1] md:aspect-[2.55/1]">
+              <img
+                src={waitlistTurfsMapUrl}
+                alt="RunVoteWin turf map with colored canvassing zones"
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-sky-200/45 mix-blend-screen" />
+              <div className="absolute inset-0 bg-primary/8" />
             </div>
           </div>
         </div>
