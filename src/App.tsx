@@ -25,9 +25,12 @@ import {
 
 const victoryPassCheckoutUrl = 'https://buy.stripe.com/7sY00jf8Jehde2acL75ZC00';
 const lifetimeCheckoutUrl = import.meta.env.VITE_WIN_FOR_LIFE_CHECKOUT_URL ?? victoryPassCheckoutUrl;
+const signupEndpoint = import.meta.env.VITE_SIGNUP_ENDPOINT ?? '';
 const sandboxUrl = 'https://app.runvotewin.com/sandbox';
 const docsUrl = 'https://docs.runvotewin.com';
 const waitlistPath = '/join-waitlist';
+const waitlistBasePosition = 101;
+const waitlistPositionStorageKey = 'runvotewin:waitlist-next-position';
 
 type SignupFormVariant = 'hero' | 'compact';
 
@@ -422,23 +425,23 @@ function formatVoters(value: number) {
 }
 
 function postLead(payload: Record<string, unknown>) {
-  return fetch('/api/leads/submit', {
+  return fetch(signupEndpoint, {
     method: 'POST',
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({
       ...payload,
+      submittedAt: new Date().toISOString(),
       page: window.location.href,
     }),
-  }).then((response) => {
-    if (!response.ok) {
-      if (response.status === 503) {
-        throw new Error('needs-endpoint');
-      }
-      throw new Error(`Lead submission failed: ${response.status}`);
-    }
-    return response;
   });
+}
+
+function reserveWaitlistPosition() {
+  const stored = Number(window.localStorage.getItem(waitlistPositionStorageKey));
+  const position = Number.isFinite(stored) && stored >= waitlistBasePosition ? stored : waitlistBasePosition;
+  window.localStorage.setItem(waitlistPositionStorageKey, String(position + 1));
+  return position;
 }
 
 async function fetchPricingJson<T>(url: string, init: RequestInit | undefined, label: string): Promise<T> {
@@ -456,33 +459,6 @@ async function fetchPricingJson<T>(url: string, init: RequestInit | undefined, l
   }
 
   return response.json() as Promise<T>;
-}
-
-async function submitWaitlist(input: { name: string; email: string; website: FormDataEntryValue | null }) {
-  const response = await fetch('/api/waitlist/submit', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: input.name,
-      email: input.email,
-      website: input.website ?? '',
-      page: window.location.href,
-    }),
-  });
-  const contentType = response.headers.get('content-type') ?? '';
-
-  if (!response.ok) {
-    if (response.status === 503) {
-      throw new Error('needs-endpoint');
-    }
-    throw new Error(`Waitlist submission failed: ${response.status}`);
-  }
-  if (!contentType.includes('application/json')) {
-    throw new Error(`Waitlist submission returned ${contentType || 'an unknown content type'}`);
-  }
-
-  return response.json() as Promise<{ ok: boolean; waitlistPosition: number | null }>;
 }
 
 function calculatePricingFallback(selection: PricingSelection): PricingResult {
@@ -583,7 +559,7 @@ function SignupForm({ variant }: { variant: SignupFormVariant }) {
 
       {status === 'needs-endpoint' && (
         <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
-          This form is ready. Add the Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
+          This form is ready. Add the Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
         </p>
       )}
       {status === 'success' && (
@@ -1255,7 +1231,7 @@ function Pricing() {
 
             {status === 'needs-endpoint' && (
               <p className="mt-4 rounded-md bg-primary/8 p-3 text-sm font-semibold leading-6 text-primary">
-                Pricing email automation is ready. Add the Google Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
+                Pricing email automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
               </p>
             )}
             {status === 'success' && (
@@ -1631,7 +1607,7 @@ function WaitlistForm() {
       </button>
       {status === 'needs-endpoint' && (
         <p className="mt-4 rounded-md bg-primary/8 p-3 text-sm font-semibold leading-6 text-primary">
-          Waitlist automation is ready. Add the Google Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
+          Waitlist automation is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
         </p>
       )}
       {status === 'success' && (
@@ -1772,23 +1748,33 @@ function JoinWaitlistPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    if (!signupEndpoint) {
+      setStatus('needs-endpoint');
+      return;
+    }
+
+    const waitlistPosition = reserveWaitlistPosition();
+    setPosition(waitlistPosition);
     setStatus('loading');
 
     try {
       const formData = new FormData(event.currentTarget);
-      const result = await submitWaitlist({
+      await postLead({
+        formType: 'launch-waitlist',
         name,
         email,
+        waitlistPosition,
+        source: 'RunVoteWin launch waitlist',
         website: formData.get('website') ?? '',
       });
 
-      setPosition(result.waitlistPosition);
       setStatus('success');
       setName('');
       setEmail('');
-    } catch (error) {
+    } catch {
+      window.localStorage.setItem(waitlistPositionStorageKey, String(waitlistPosition));
       setPosition(null);
-      setStatus(error instanceof Error && error.message === 'needs-endpoint' ? 'needs-endpoint' : 'error');
+      setStatus('error');
     }
   }
 
@@ -1872,7 +1858,7 @@ function JoinWaitlistPage() {
 
             {status === 'needs-endpoint' && (
               <p className="mt-4 rounded-md bg-surface-container p-3 text-sm font-semibold leading-6 text-primary">
-                Waitlist collection is ready. Add the Google Apps Script web app URL as SIGNUP_ENDPOINT to turn it on.
+                Waitlist collection is ready. Add the Google Apps Script web app URL as VITE_SIGNUP_ENDPOINT to turn it on.
               </p>
             )}
             {status === 'success' && (
