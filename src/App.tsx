@@ -1761,9 +1761,6 @@ function JoinWaitlistPage() {
               <>
                 <div>
                   <p className="text-sm font-extrabold uppercase text-accent">Reserve your place</p>
-                  <p className="mt-2 text-sm font-semibold leading-6 text-on-surface-variant">
-                    First public waitlist spots start at #101.
-                  </p>
                 </div>
 
                 <div className="mt-5 grid gap-4">
