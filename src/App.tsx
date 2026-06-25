@@ -1778,8 +1778,8 @@ function JoinWaitlistPage() {
   }
 
   return (
-    <main className="bg-primary text-white">
-      <section className="relative isolate min-h-screen overflow-hidden pt-28 md:pt-36">
+    <main className="flex-1 bg-primary text-white">
+      <section className="relative isolate flex min-h-[calc(100vh-8rem)] flex-col overflow-hidden pt-28 md:pt-36">
         <div className="absolute inset-0 -z-10">
           <img src={organizingPhotoUrl} alt="Campaign organizers working together" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-primary/84" />
@@ -1902,6 +1902,20 @@ function JoinWaitlistPage() {
               </>
             )}
           </form>
+        </div>
+
+        <div className="pointer-events-none mt-auto px-5 pb-8 md:px-8 md:pb-10">
+          <div className="relative mx-auto h-24 max-w-7xl overflow-hidden rounded-lg border border-white/12 bg-white/7 md:h-28">
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(142,239,255,0.14)_1px,transparent_1px),linear-gradient(rgba(142,239,255,0.12)_1px,transparent_1px)] bg-[size:38px_38px]" />
+            <div className="absolute left-[-8%] top-6 h-28 w-[118%] rounded-[50%] border-t-2 border-dashed border-secondary-container/45" />
+            <div className="absolute left-[10%] top-12 h-24 w-[82%] rounded-[50%] border-t border-white/25" />
+            <div className="absolute bottom-5 left-[18%] h-3 w-3 rounded-full border-2 border-secondary-container bg-primary shadow-[0_0_0_6px_rgba(142,239,255,0.12)]" />
+            <div className="absolute right-[22%] top-6 h-3 w-3 rounded-full border-2 border-white bg-secondary shadow-[0_0_0_6px_rgba(255,255,255,0.1)]" />
+            <div className="absolute bottom-4 right-5 flex items-center gap-2 rounded-md bg-primary/65 px-3 py-2 text-xs font-extrabold uppercase text-secondary-container backdrop-blur">
+              <MapPinned size={15} />
+              <span>Launch route</span>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -2152,7 +2166,7 @@ function TermsOfServicePage() {
 
 function Footer() {
   return (
-    <footer className="bg-primary py-12 text-white">
+    <footer className="mt-auto bg-primary py-12 text-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-5 md:flex-row md:items-center md:justify-between md:px-8">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-md bg-white/10">
@@ -2186,7 +2200,7 @@ export default function App() {
   const isJoinWaitlistPage = path === waitlistPath;
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="flex min-h-screen flex-col bg-surface">
       <Navbar />
       {isJoinWaitlistPage ? (
         <JoinWaitlistPage />
