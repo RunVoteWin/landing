@@ -94,7 +94,6 @@ const navItems = [
   { label: 'Pricing', href: '/#pricing' },
   { label: 'Integrations', href: '/#integrations' },
   { label: 'Compare', href: '/#compare' },
-  { label: 'Waitlist', href: waitlistPath },
 ];
 
 const organizingPhotoUrl =
